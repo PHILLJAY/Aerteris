@@ -13,7 +13,7 @@ public class Dungeon {
 	char[] c = new char[4];
 	char[] w = new char[18];
 	int[] moveType = new int[4]; //0=no, 1=travel, 2=move and remain
-	
+
 	//symbols
 	char playerSym = '@';
 	char lootSym = 'C';
@@ -67,40 +67,48 @@ public class Dungeon {
 
 	public void generateRoom() { // 1 wall currently -- don't forget to add moveType()
 		int[] done = new int[]{-1,-1,-1};
-		do done[0] = (int)Math.floor(Math.random()*4); while (done[0]==findPlayer(0));
-		if (Math.random()<wallChance) {
-			if (Math.random()<farWallChance) {
-				w[done[0]] = ' ';
-				w[done[0]+12] = '+';
-				if (done[0]==1||done[0]==2) {
-					w[done[0]+4] = '|';
-					w[done[0]+8] = '-';
+		for (int i = 0; i < 3; i++) {
+			int failedAttempts = 0;
+			do {
+				done[i] = (int)Math.floor(Math.random()*4); 
+				failedAttempts++;
+			} while ((done[i]==findPlayer(0)||existingWalls(done[i],0))&&failedAttempts<50);
+			if (failedAttempts>50) break;
+			if (Math.random()<wallChance) {
+				if (Math.random()<farWallChance) {
+					w[done[i]] = ' ';
+					w[done[i]+12] = '+';
+					if (done[i]==1||done[i]==2) {
+						w[done[i]+4] = '|';
+						w[done[i]+8] = '-';
+					} else {
+						w[done[i]+4] = '-';
+						w[done[i]+8] = '|';
+					}
 				} else {
-					w[done[0]+4] = '-';
-					w[done[0]+8] = '|';
+					w[done[i]+4] = ' ';
+					w[done[i]+8] = ' ';
+					w[done[i]+12] = ' ';
+					if (done[i]==1||done[i]==2) w[done[i]] = '|';
+					else w[done[i]] = '-';
 				}
 			} else {
-				w[done[0]+4] = ' ';
-				w[done[0]+8] = ' ';
-				w[done[0]+12] = ' ';
-				if (done[0]==1||done[0]==2) w[done[0]] = '|';
-				else w[done[0]] = '-';
-			}
-		} else {
-			w[done[0]] = ' ';
-			w[done[0]+4] = ' ';
-			if (done[0]==1||done[0]==2) {
-				w[done[0]+8] = '-';
-				w[done[0]+12] = '-';
-			} else {
-				w[done[0]+8] = '|';
-				w[done[0]+12] = '|';
+				w[done[i]] = ' ';
+				w[done[i]+4] = ' ';
+				if (done[i]==1||done[i]==2) {
+					w[done[i]+8] = '-';
+					w[done[i]+12] = '-';
+				} else {
+					w[done[i]+8] = '|';
+					w[done[i]+12] = '|';
+				}
+				break;
 			}
 		}
 	}
-	
+
 	public void generateContents() {
-		
+
 	}
 
 	public void refreshRoom() {
@@ -121,14 +129,18 @@ public class Dungeon {
 		generateContents();
 		refreshRoom();
 	}
-	
+
 	public void saveRoom() {
 		//location, 0.1.2.3.4.5
 	}
-	
+
 	public int findPlayer(int i) { //should never be called when player is not in a room
 		if (c[i] == playerSym) return i;
 		return findPlayer(i+1);
+	}
+	
+	public boolean existingWalls(int test, int index) {
+		if (test==done[0])
 	}
 
 }
