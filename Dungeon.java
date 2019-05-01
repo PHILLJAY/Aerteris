@@ -16,7 +16,7 @@ public class Dungeon {
 	
 	//symbols
 	char playerSym = '@';
-	char lootSym = 'Â©';
+	char lootSym = '©';
 	char enemySym = 'E';
 
 	/* 
@@ -32,15 +32,15 @@ public class Dungeon {
 	 */
 
 	String room = "" +
-			"    Â¦       Â¦    " + "\n" +
-			"    Â¦       Â¦    " + "\n" +
+			"    ¦       ¦    " + "\n" +
+			"    ¦       ¦    " + "\n" +
 			"----+       +----" + "\n" +
 			"                 " + "\n" +
 			"                 " + "\n" +
 			"                 " + "\n" +
 			"----+       +----" + "\n" +
-			"    Â¦       Â¦    " + "\n" +
-			"    Â¦       Â¦    " + "\n";
+			"    ¦      ¦     " + "\n" +
+			"    ¦      ¦     " + "\n";
 
 	public Dungeon(int size, double wallChance, double farWallChance, boolean hasQuirk) {
 		w[16] = ' ';
@@ -52,7 +52,7 @@ public class Dungeon {
 		String[][] visitedRooms = new String[size][size];
 		insideRoom = new int[]{size/2, size/2};
 
-		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','Â¦','-','-','Â¦','Â¦','-','-','Â¦',' ','+'};
+		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','¦','-','-','¦','¦','-','-','¦',' ','+'};
 		c = new char[]{' ',' ','@',' '};
 	}
 
@@ -73,17 +73,17 @@ public class Dungeon {
 				w[done[0]] = ' ';
 				w[done[0]+12] = '+';
 				if (done[0]==1||done[0]==2) {
-					w[done[0]+4] = 'Â¦';
+					w[done[0]+4] = '¦';
 					w[done[0]+8] = '-';
 				} else {
 					w[done[0]+4] = '-';
-					w[done[0]+8] = 'Â¦';
+					w[done[0]+8] = '¦';
 				}
 			} else {
 				w[done[0]+4] = ' ';
 				w[done[0]+8] = ' ';
 				w[done[0]+12] = ' ';
-				if (done[0]==1||done[0]==2) w[done[0]] = 'Â¦';
+				if (done[0]==1||done[0]==2) w[done[0]] = '¦';
 				else w[done[0]] = '-';
 			}
 		} else {
@@ -93,8 +93,8 @@ public class Dungeon {
 				w[done[0]+8] = '-';
 				w[done[0]+12] = '-';
 			} else {
-				w[done[0]+8] = 'Â¦';
-				w[done[0]+12] = 'Â¦';
+				w[done[0]+8] = '¦';
+				w[done[0]+12] = '¦';
 			}
 		}
 	}
