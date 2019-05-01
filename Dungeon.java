@@ -53,7 +53,7 @@ public class Dungeon {
 		insideRoom = new int[]{size/2, size/2};
 
 		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
-		c = new char[]{' ',' ','@',' '};
+		c = new char[]{' ',' ',' ','@'};
 	}
 
 	public void printGeneralInfo() {
@@ -72,7 +72,7 @@ public class Dungeon {
 			do {
 				done[i] = (int)Math.floor(Math.random()*4); 
 				failedAttempts++;
-			} while ((done[i]==findPlayer(0)||existingWalls(done[i],0))&&failedAttempts<50);
+			} while ((done[i]==findPlayer(0)||isExistingWall(done,i,0))&&failedAttempts<50);
 			if (failedAttempts>50) break;
 			if (Math.random()<wallChance) {
 				if (Math.random()<farWallChance) {
@@ -134,13 +134,16 @@ public class Dungeon {
 		//location, 0.1.2.3.4.5
 	}
 
-	public int findPlayer(int i) { //should never be called when player is not in a room
+	private int findPlayer(int i) { //should never be called when player is not in a room
 		if (c[i] == playerSym) return i;
 		return findPlayer(i+1);
 	}
 	
-	public boolean existingWalls(int test, int index) {
-		if (test==done[0])
+	private boolean isExistingWall(int[] done, int testIndex, int index) {
+		if (index>=3) return false;
+		if (testIndex==index) return isExistingWall(done,testIndex,index+1);
+		if (done[testIndex]==done[index]) return true;
+		return isExistingWall(done,testIndex,index+1);
 	}
 
 }
