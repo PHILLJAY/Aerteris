@@ -2,9 +2,19 @@ public class Debug {
 
 	public static void main(String[] args) {
 
-		dungeon();
+		inventory();
+		//dungeon();
 		//doWall();
 
+	}
+	public static void inventory() {
+		Inv test =  new Inv();
+		test.place(0, 1);
+		test.place(1, 2);
+		test.showInv();
+		test.place(0, 2);
+		test.showInv();
+		
 	}
 
 	public static void dungeon() {
