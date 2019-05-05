@@ -2,7 +2,7 @@ public class Debug {
 
 	public static void main(String[] args) {
 
-		inventory();
+		//inventory();
 		//dungeon();
 		//doWall();
 
@@ -21,11 +21,8 @@ public class Debug {
 		int s = 8;
 
 		Dungeon d = new Dungeon(s, 0.7, 0.4, 0.1, false); //decent setup for basic dungeon according to individual tests: n, 0.7, 0.4, 0.1
-
-		//d.insideRoom = new int[]{s-1,0};
-		d.newRoom();
-		System.out.print(d.room);
-		d.printGeneralInfo();
+		
+		d.enterDungeon();
 	}
 
 	public static void doWall() { //NOT DONE THIS WAY IN THE DUNGEON CLASS!! THIS IS ONLY A TEST
