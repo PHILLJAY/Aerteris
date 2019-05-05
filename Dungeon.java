@@ -1,9 +1,10 @@
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * Deals with generation of and movement within a dungeon. Will trigger events such as battles, but that is dealt with in a different class.
  * 
- * @version 1.0
+ * @version 1.1
  * 
  * @author Gavin Jameson
  */
@@ -11,22 +12,23 @@ public class Dungeon {
 
 	//constructor
 	int size;
-	String[][] visitedRooms;
-	int[] insideRoom;
-	double wallChance;
-	double farWallChance;
-	double wallChanceReduction;
+	private String[][] visitedRooms;
+	private int[] insideRoom;
+	private double wallChance;
+	private double farWallChance;
+	private double wallChanceReduction;
 
 	//room prep
-	char[] c = new char[4];
-	char[] w = new char[18];
-	int[] done;
-	int[] moveType = new int[4]; //0=no, 1=travel, 2=move and remain
+	private char[] c = new char[4];
+	private char[] w = new char[18];
+	private int[] done;
+	private int[] moveType = new int[4]; //values: 0=no, 1=travel, 2=move and remain
+	private Scanner input = new Scanner(System.in);
 
 	//symbols
-	char playerSym = '@';
-	char lootSym = 'C';
-	char enemySym = 'E';
+	private char playerSym = '@';
+	private char lootSym = 'C';
+	private char enemySym = 'E';
 
 	/* 
 	 * Layout:
@@ -76,6 +78,37 @@ public class Dungeon {
 		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
 		c = new char[]{' ',' ',' ','@'};
 	}
+	
+	/**
+	 * Starts the progression through the dungeon.
+	 * 
+	 * @see {@link #newRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
+	 */
+	public void enterDungeon() {
+		String action = "new";
+		do {
+			switch (action) {
+			case "new":
+				newRoom();
+				System.out.print(room);
+				break;
+			case "stay":
+				refreshRoom();
+				System.out.print(room);
+				break;
+			case "battle": 
+				//battle class?
+				System.out.print("[FIGHTING...]\n\n");
+				break;
+			case "loot":
+				//loot class? in dungeon or elsewhere?
+				System.out.print("[LOOTING...]\n\n");
+				break;
+			}
+			action = takeInput();
+		} while (!action.equals("leave"));
+		System.out.print("You left the dungeon.\n\n");
+	}
 
 	/**
 	 * Prints information about the dungeon structure and generation specifics.
@@ -94,9 +127,13 @@ public class Dungeon {
 	 * Decides how many walls there should be and generates them based on player position, size restrictions, and adjacent rooms ({@code not implemented}).
 	 * <p>
 	 * Private method called in the {@link #newRoom()} public method.
+	 * 
+	 * @see {@link #resetMoveType(int)}, {@link #generateWall(int)}, {@link #findPlayer(int)}, {@link #isExistingWall(int,int)}
 	 */
-	private void generateRoom() { // don't forget to add moveType() -> probably to generateWall()
+	private void generateRoom() {
 		done = new int[]{-1,-1,-1};
+		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
+		resetMoveType(0);
 		int a;
 		if (insideRoom[0] == 0) {
 			done[0] = 1;
@@ -109,10 +146,10 @@ public class Dungeon {
 		else a = 1;
 		if (insideRoom[1] == 0) {
 			done[a] = 0;
-			generateWall(1);
-		} else if (insideRoom[0] == size - 1) {
+			generateWall(a);
+		} else if (insideRoom[1] == size - 1) {
 			done[a] = 3;
-			generateWall(1);
+			generateWall(a);
 		}
 		for (int i = 0; i < 3; i++) {
 			if (done[i] == -1) {
@@ -141,9 +178,9 @@ public class Dungeon {
 	}
 
 	/**
-	 * {@code unused}
+	 * {@code empty}
 	 * <p>
-	 * Generates item drops and enemies in rooms based on available positions.
+	 * Generates item drops and enemies in rooms in based on available positions.
 	 * <p>
 	 * Private method called in the {@link #newRoom()} public method.
 	 */
@@ -154,7 +191,7 @@ public class Dungeon {
 	/**
 	 * Updates {@code room} String to be printed with the new walls and contents generated.
 	 * <p>
-	 * Private method called in the {@link #newRoom()} public method.
+	 * Private method called in the {@link #newRoom()} private method and the {@link #enterDungeon()} public method.
 	 */
 	private void refreshRoom() {
 		room = "" +
@@ -166,11 +203,13 @@ public class Dungeon {
 				w[5 ] + w[16] + w[16] + w[16] + w[1 ] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[2 ] + w[16] + w[16] + w[16] + w[6 ] + "\n" +
 				w[13] + w[9 ] + w[9 ] + w[9 ] + w[17] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[17] + w[10] + w[10] + w[10] + w[14] + "\n" +
 				w[16] + w[16] + w[16] + w[16] + w[11] + w[16] + w[16] + w[16] + c[3 ] + w[16] + w[16] + w[16] + w[11] + w[16] + w[16] + w[16] + w[16] + "\n" +
-				w[16] + w[16] + w[16] + w[16] + w[15] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[15] + w[16] + w[16] + w[16] + w[16] + "\n\n";
+				w[16] + w[16] + w[16] + w[16] + w[15] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[15] + w[16] + insideRoom[0] + ", " + insideRoom[1] + "\n\n";
 	}
 
 	/**
 	 * Generates a new room in the dungeon, including walls and contents.
+	 * <p>
+	 * Private method called in the {@link #enterDungeon()} public method.
 	 * 
 	 * @see {@link #generateRoom()}, {@link #generateContents()}, {@link #refreshRoom()}
 	 */
@@ -192,11 +231,11 @@ public class Dungeon {
 	/**
 	 * Finds the location of the player in a room.
 	 * <p>
-	 * Private method called in the {@link #generateRoom()} private method.
+	 * Private method called in the {@link #generateRoom()} private method and {@link #tryMove(String)} private method.
 	 * 
 	 * @param i - Index to search from; should always be called with initial value {@code 0}.
 	 * 
-	 * @return Integer index in the contents array ({@code c}) where the player is currently located.
+	 * @return {@code int} index in the contents array ({@code c}) where the player is currently located.
 	 */
 	private int findPlayer(int i) { //should never be called when player is not in a room
 		if (c[i] == playerSym) return i;
@@ -211,7 +250,7 @@ public class Dungeon {
 	 * @param test - Integer (corresponding to a wall) to be searched for.
 	 * @param index - Index to search from; should always be called with initial value {@code 0}.
 	 * 
-	 * @return True if {@code test} has been found in {@code done} and therefore has already been generated, false if not.
+	 * @return {@code true} if {@code test} has been found in {@code done} and therefore has already been generated, {@code false} if not.
 	 */
 	private boolean isExistingWall(int test, int index) {
 		if (index >= 3) return false;
@@ -225,10 +264,11 @@ public class Dungeon {
 	 * <p>
 	 * Private method called in the {@link #generateRoom()} private method.
 	 * 
-	 * @param i - Integer (corresponding to a wall) to be generated.
+	 * @param i - Integer in the array {@code done} (corresponding to a wall) to be generated.
 	 */
 	private void generateWall(int i) {
 		if (Math.random() < farWallChance) {
+			moveType[done[i]] = 2;
 			w[done[i]] = ' ';
 			w[done[i]+12] = '+';
 			if (done[i] == 1 || done[i] == 2) {
@@ -239,12 +279,168 @@ public class Dungeon {
 				w[done[i]+8] = '|';
 			}
 		} else {
+			moveType[done[i]] = 0;
 			w[done[i]+4] = ' ';
 			w[done[i]+8] = ' ';
 			w[done[i]+12] = ' ';
 			if (done[i] == 1 || done[i] == 2) w[done[i]] = '|';
 			else w[done[i]] = '-';
 		}
+	}
+
+	/**
+	 * Allows the user to input a {@code String} corresponding to movement or menu options. Will loop until a movement is received.
+	 * All inputs can be printed to the console with {@link #listInputs()}.
+	 * <p>
+	 * Private method called in the {@link #enterDungeon()} public method.
+	 * 
+	 * @return {@code "leave"} if the input was leave, {@code "new"} if moving to a new room, {@code "stay"} if staying in the room, {@code "battle"} if entering a battle, and {@code "loot"} if looting.
+	 *
+	 * @see {@link #listInputs()}, {@link #tryMove(String)}
+	 */
+	private String takeInput() {
+		int r;
+		while (true) {
+			//while (input.hasNext()) input.next(); //clear queue
+			System.out.print("Input: ");
+			String in = input.next();
+			switch (in) {
+			case "list":
+				listInputs();
+				break;
+			case "w": case "a": case "s": case "d":
+				if ((r = tryMove(in)) > 0) {
+					switch (r) {
+					case 1: return "new";
+					case 2: return "stay";
+					case 3: return "battle";
+					case 4: return "loot";
+					}
+				} else {
+					break;
+				}
+			case "inventory":
+				System.out.print("[this is your inventory]\n");
+				//manageInventory?
+				break;
+			case "leave":
+				return "leave";
+			}
+		}
+	}
+
+	/**
+	 * Attempts to move in the direction specified in the parameter corresponding to the 'wasd' keys.
+	 * <p>
+	 * Private method called in the {@link #takeInput()} private method.
+	 * 
+	 * @param direction - {@code "w"}, {@code "a"}, {@code "s"}, or {@code "d"}.
+	 * 
+	 * @return {@code 0} if unsuccessful, {@code 1} if passing to another room, {@code 2} if staying in the room, {@code 3} if entering a battle, and {@code 4} if looting.
+	 *
+	 * @see {@link #resetContents(int)}, {@link #refreshCoords(String)}, {@link #findPlayer(int)}
+	 */
+	private int tryMove(String direction) {
+		int a = 0;
+		int b = 3;
+		switch (direction) {
+		case "w":
+			a = 0;
+			b = 3;
+			break;
+		case "a":
+			a = 1;
+			b = 2;
+			break;
+		case "s":
+			a = 3;
+			b = 0;
+			break;
+		case "d":
+			a = 2;
+			b = 1;
+			break;
+		}
+		switch (moveType[a]) {
+		case 0:
+			System.out.print("You can't go there!\n");
+			return 0;
+		case 1:
+			resetContents(0);
+			c[b] = playerSym;
+			refreshCoords(direction);
+			return 1;
+		case 2:
+			int ret = 2;
+			if (c[a] == ' ' || c[a] == playerSym);
+			else if (c[a] == enemySym) ret = 3;
+			else if (c[a] == lootSym) ret = 4;
+			c[findPlayer(0)] = ' ';
+			c[a] = playerSym;
+			return ret;
+		}
+		System.err.print("Unable to find a movement option.\n");
+		return 0;
+	}
+	
+	/**
+	 * Updates the current coordinates of the room in the dungeon, stored in the {@code insideRoom} array. 
+	 * <p>
+	 * Private method called in the {@link #tryMove(String)} private method.
+	 * 
+	 * @param direction - A successful input from {@link #tryMove(String)}; {@code "w"}, {@code "a"}, {@code "s"}, or {@code "d"}.
+	 */
+	private void refreshCoords(String direction) {
+		switch (direction) {
+		case "w": insideRoom[1]--; return;
+		case "a": insideRoom[0]--; return;
+		case "s": insideRoom[1]++; return;
+		case "d": insideRoom[0]++; return;
+		}
+	}
+	
+	/**
+	 * Sets all indexes in the contents array ({@code c}) to a whitespace {@code char}.
+	 * <p>
+	 * Private method called in the {@link #tryMove(String)} private method.
+	 * 
+	 * @param i - Index to search from; should always be called with initial value {@code 0}.
+	 */
+	private Object resetContents(int i) {
+		if (i > 3) return null;
+		c[i] = ' ';
+		return resetContents(i+1);
+	}
+	
+	/**
+	 * Sets all indexes in the array ({@code moveType}) to {@code 1} (open).
+	 * <p>
+	 * Private method called in the {@link #generateRoom()} private method.
+	 * 
+	 * @param i - Index to search from; should always be called with initial value {@code 0}.
+	 */
+	private Object resetMoveType(int i) {
+		if (i > 3) return null;
+		moveType[i] = 1;
+		return resetMoveType(i+1);
+	}
+
+	/**
+	 * Lists all valid inputs for {@link #takeInput()}.
+	 * <p>
+	 * Private method called in the {@link #takeInput()} private method.
+	 */
+	private void listInputs() {
+		System.out.print("" +
+				"\"list\" - list all acceptable inputs (what this does)" + "\n" +
+				"\"w\" - move up" + "\n" +
+				"\"a\" - move left" + "\n" +
+				"\"s\" - move down" + "\n" +
+				"\"d\" - move right" + "\n" +
+				"\"inventory\" - access inventory (does nothing)" + "\n" +
+				"\"leave\" - leave dungeon and return to surface" + "\n" +
+				"\n"
+				);
 	}
 
 }
