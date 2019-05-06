@@ -4,16 +4,16 @@ import java.util.*;
 public class Battle {
 
 	 public static Scanner scan = new Scanner(System.in);
-	
+	private char n;
 
 	public Battle(charac x,Monster y ) {
 		while(true) {
 			if(isDead(x)==false) {
-				if(move()=='a') {
+				if((n=move())=='a') {
 					attack(x,y);
 					System.out.println("deals "+ x.attack+" damage "+
 					y.name+ " HP: "+y.currenthealth );
-				} else if(move()=='r') break;
+				} else if(n=='r') break;
 			} else {
 				System.out.print("you died");
 				break;
@@ -52,14 +52,14 @@ public class Battle {
 	}
 	
 	public static boolean isDead(charac x) {
-		if(x.currenthealth<0) {
+		if(x.currenthealth<=0) {
 			return true;
 		}
 		return false;
 	}
 	
 	public static boolean isMonsterDead(Monster x) {
-		if(x.currenthealth<0) {
+		if(x.currenthealth<=0) {
 			return true;
 		}
 		return false;
