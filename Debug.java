@@ -10,10 +10,11 @@ public class Debug {
 	public static void inventory() {
 		Inv test =  new Inv();
 		test.place(0, 1);
-		test.place(1, 2);
+		test.place(1, 3);
 		test.showInv();
-		test.place(0, 2);
-		test.showInv();
+//		test.place(0, 2);
+//		test.showInv();
+		System.out.println(test.printDesc(4));
 		
 	}
 
