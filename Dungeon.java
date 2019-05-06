@@ -89,7 +89,7 @@ public class Dungeon {
 	 * 
 	 * @see {@link #newRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public void enterDungeon() {
+	public void enterDungeon(Charac player) {
 		String action = "new";
 		do {
 			switch (action) {
@@ -102,8 +102,8 @@ public class Dungeon {
 				System.out.print(room);
 				break;
 			case "battle": 
-				//battle class?
-				System.out.print("[FIGHTING...]\n\n");
+				//Monster monster = new Monster((int)(10+Math.floor(Math.random()*7)-3), (1), (0.1), (0), "TESTSUBJECTSKELE");
+				//Battle b = new Battle(player, monster);
 				refreshRoom();
 				System.out.print(room);
 				break;
@@ -220,7 +220,7 @@ public class Dungeon {
 				w[5 ] + w[16] + w[16] + w[16] + w[1 ] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[2 ] + w[16] + w[16] + w[16] + w[6 ] + "\n" +
 				w[13] + w[9 ] + w[9 ] + w[9 ] + w[17] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[17] + w[10] + w[10] + w[10] + w[14] + "\n" +
 				w[16] + w[16] + w[16] + w[16] + w[11] + w[16] + w[16] + w[16] + c[3 ] + w[16] + w[16] + w[16] + w[11] + w[16] + w[16] + w[16] + w[16] + "\n" +
-				w[16] + w[16] + w[16] + w[16] + w[15] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[15] + w[16] + insideRoom[0] + ", " + insideRoom[1] + "\n\n";
+				w[16] + w[16] + w[16] + w[16] + w[15] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[7 ] + w[15] + w[16] + (insideRoom[0]+1) + ", " + (insideRoom[1]+1) + "\n\n";
 	}
 
 	/**
@@ -463,22 +463,6 @@ public class Dungeon {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
