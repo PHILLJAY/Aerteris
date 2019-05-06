@@ -6,7 +6,7 @@ public class Battle {
 	 public static Scanner scan = new Scanner(System.in);
 	
 
-	public void Battling(charac x,Monster y ) {
+	public Battle(charac x,Monster y ) {
 		while(true) {
 			if(isDead(x)==false) {
 				if(move()=='a') {
