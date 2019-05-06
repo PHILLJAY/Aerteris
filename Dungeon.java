@@ -17,6 +17,8 @@ public class Dungeon {
 	private double wallChance;
 	private double farWallChance;
 	private double wallChanceReduction;
+	private double lootChance;
+	private double enemyChance;
 
 	//room prep
 	private char[] c = new char[4];
@@ -60,17 +62,20 @@ public class Dungeon {
 	 * @param wallChance - The chance that a wall will be generated; will continue to try generating walls on all applicable sides until it fails. Sides are picked at random.
 	 * @param farWallChance - The chance that a wall will have a pocket in which item drops or enemies can spawn.
 	 * @param wallChanceReduction - What percent is subtracted from {@code wallChance} on each sequential generation in a room.
-	 * @param hasQuirk - {@code unused}
+	 * @param lootChance - The chance that a pocket will have a loot. Less far walls will decrease the number of chests.
+	 * @param enemyChance - The chance that an enemy will spawn in a hallway. Less walls will increase number of enemies.
 	 * 
-	 * @see #generateRoom()
+	 * @see {@link #enterDungeon()}
 	 */
-	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, boolean hasQuirk) {
+	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, double lootChance, double enemyChance) {
 		w[16] = ' ';
 		w[17] = '+';
 		this.size = size;
 		this.wallChance = wallChance;
 		this.farWallChance = farWallChance;
 		this.wallChanceReduction = wallChanceReduction;
+		this.lootChance = lootChance;
+		this.enemyChance = enemyChance;
 		//to save
 		String[][] visitedRooms = new String[size][size];
 		insideRoom = new int[]{size/2, size/2};
@@ -78,7 +83,7 @@ public class Dungeon {
 		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
 		c = new char[]{' ',' ',' ','@'};
 	}
-	
+
 	/**
 	 * Starts the progression through the dungeon.
 	 * 
@@ -99,10 +104,14 @@ public class Dungeon {
 			case "battle": 
 				//battle class?
 				System.out.print("[FIGHTING...]\n\n");
+				refreshRoom();
+				System.out.print(room);
 				break;
 			case "loot":
 				//loot class? in dungeon or elsewhere?
 				System.out.print("[LOOTING...]\n\n");
+				refreshRoom();
+				System.out.print(room);
 				break;
 			}
 			action = takeInput();
@@ -185,7 +194,15 @@ public class Dungeon {
 	 * Private method called in the {@link #newRoom()} public method.
 	 */
 	private void generateContents() {
-
+		for (int i = 0; i < 4; i++) {
+			if (c[i] == ' ') {
+				if (moveType[i] == 2) {
+					if (Math.random() < lootChance) c[i] = lootSym;
+				} else if (moveType[i] == 1) {
+					if (Math.random() < enemyChance) c[i] = enemySym;
+				}
+			}
+		}
 	}
 
 	/**
@@ -366,10 +383,12 @@ public class Dungeon {
 			System.out.print("You can't go there!\n");
 			return 0;
 		case 1:
-			resetContents(0);
-			c[b] = playerSym;
-			refreshCoords(direction);
-			return 1;
+			if (c[a] != enemySym) {
+				resetContents(0);
+				c[b] = playerSym;
+				refreshCoords(direction);
+				return 1;
+			}
 		case 2:
 			int ret = 2;
 			if (c[a] == ' ' || c[a] == playerSym);
@@ -382,7 +401,7 @@ public class Dungeon {
 		System.err.print("Unable to find a movement option.\n");
 		return 0;
 	}
-	
+
 	/**
 	 * Updates the current coordinates of the room in the dungeon, stored in the {@code insideRoom} array. 
 	 * <p>
@@ -398,7 +417,7 @@ public class Dungeon {
 		case "d": insideRoom[0]++; return;
 		}
 	}
-	
+
 	/**
 	 * Sets all indexes in the contents array ({@code c}) to a whitespace {@code char}.
 	 * <p>
@@ -411,7 +430,7 @@ public class Dungeon {
 		c[i] = ' ';
 		return resetContents(i+1);
 	}
-	
+
 	/**
 	 * Sets all indexes in the array ({@code moveType}) to {@code 1} (open).
 	 * <p>
@@ -444,3 +463,28 @@ public class Dungeon {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
