@@ -89,7 +89,7 @@ public class Dungeon {
 	 * 
 	 * @see {@link #newRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public void enterDungeon(Charac player) {
+	public void enterDungeon(charac player) {
 		String action = "new";
 		do {
 			switch (action) {
