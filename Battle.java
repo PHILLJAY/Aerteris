@@ -18,14 +18,14 @@ public class Battle {
 					attack(x,y);
 				} else if(n=='r') { System.out.println("You ran away!\n"); break;}
 			} else {
-				System.out.print("You died");
+				System.out.println("You died");
 				break;
 			}
 
 			if(isMonsterDead(y)==false) {
 				monsterattack(x,y);
 			}else {
-				System.out.print("you won");
+				System.out.println("you won");
 				break;
 			}
 		}
@@ -40,7 +40,6 @@ public class Battle {
 		System.out.println("> You deal "+ (x.attack-y.defense)+" damage to "+y.name);
 		}
 
-
 	}
 
 	public static void monsterattack(charac p, Monster m){
@@ -48,19 +47,20 @@ public class Battle {
 
 		if(r<0.7) {
 			BasicMonsterAttack(p,m);
-		} else if(m.name.equals("skele")) {
-			System.out.println("> "+m.name +" uses BONE CLAW and deals " + (m.attack+2-p.defense) +" damage! \n");
-			p.currenthealth+=p.defense-(m.attack+2);
-		} else if(m.name.equals("Cave Bat")) {
-			if(m.attack+m.currenthealth<=m.maxhealth) {
-			System.out.println("> "+m.name +" SUCKS " + (m.attack-p.defense) +" health! \n");
-			p.currenthealth+=p.defense-(m.attack);
-			m.currenthealth+=m.attack;
-			} else {
-			BasicMonsterAttack(p,m);
-			}
+		} else {
+			Monster.SpecialAttack(p, m,m.name);
 		}
 
+
+	}
+	public static void lifesteal(charac p, Monster m) {
+		System.out.println("> "+m.name +" SUCKS " + (m.attack-p.defense) +" health! \n");
+		if(m.attack+m.currenthealth<=m.maxhealth) {
+			p.currenthealth+=p.defense-(m.attack);
+			m.currenthealth+=m.attack;
+		} else {
+			BasicMonsterAttack(p,m);
+		}
 	}
 
 	public static void BasicMonsterAttack(charac p, Monster m) {
