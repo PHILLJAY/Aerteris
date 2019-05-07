@@ -9,7 +9,7 @@ public class Battle {
 	public Battle(charac x,Monster y ) {
 		System.out.println("\n-------------------------------");
 		System.out.println("# "+y.name+" Appears! # \n");
-		
+
 		while(true) {
 			if(isDead(x)==false) {
 				System.out.println("Your HP: "+x.currenthealth);
@@ -23,7 +23,7 @@ public class Battle {
 			}
 
 			if(isMonsterDead(y)==false) {
-				monsterattack(x,y,"a");
+				monsterattack(x,y);
 			}else {
 				System.out.print("you won");
 				break;
@@ -40,23 +40,37 @@ public class Battle {
 		System.out.println("> You deal "+ (x.attack-y.defense)+" damage to "+y.name);
 		}
 
-		
+
 	}
 
-	public static void monsterattack(charac p, Monster m,String s){
-		if(s.equals("a")) {
-			if(Math.random()<=m.crit) {
-				p.currenthealth+=p.defense-m.attack*2;
-				System.out.println("> "+m.name +" CRITS " + (m.attack-p.defense) +" damage \n");
-			}else {	p.currenthealth+=p.defense-m.attack;
-			System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
+	public static void monsterattack(charac p, Monster m){
+		double r = Math.random();
+
+		if(r<0.7) {
+			BasicMonsterAttack(p,m);
+		} else if(m.name.equals("skele")) {
+			System.out.println("> "+m.name +" uses BONE CLAW and deals " + (m.attack+2-p.defense) +" damage! \n");
+			p.currenthealth+=p.defense-(m.attack+2);
+		} else if(m.name.equals("Cave Bat")) {
+			if(m.attack+m.currenthealth<=m.maxhealth) {
+			System.out.println("> "+m.name +" SUCKS " + (m.attack-p.defense) +" health! \n");
+			p.currenthealth+=p.defense-(m.attack);
+			m.currenthealth+=m.attack;
+			} else {
+			BasicMonsterAttack(p,m);
 			}
-		} else if(s.equals("sp")) {
-			p.currenthealth+=p.defense-m.attack*3;
+		}
+
+	}
+
+	public static void BasicMonsterAttack(charac p, Monster m) {
+		if(Math.random()<=m.crit) {
+			p.currenthealth+=p.defense-m.attack*2;
+			System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
+		}else {	p.currenthealth+=p.defense-m.attack;
+		System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
 		}
 	}
-
-
 
 	public char move() {
 		System.out.print("Whatchu wanna do: \nAttack \nRun \nItem \n");
