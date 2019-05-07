@@ -10,7 +10,6 @@ public class Monster extends charac {
 	public Monster(int maxhealth, int attack, double crit,int defense, String n) {
 		super(maxhealth,attack,crit,defense);
 		this.name=n;
-		// TODO Auto-generated constructor stub
 	}
 	
 	
