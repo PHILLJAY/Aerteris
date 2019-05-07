@@ -3,9 +3,9 @@ public class Debug {
 	public static void main(String[] args) {
 
 		//inventory();
-		dungeon();
+		//dungeon();
 		//doWall();
-		//fighting();
+		fighting();
 
 	}
 	
@@ -34,8 +34,14 @@ public class Debug {
 	}
 	
 	public static void fighting() {
-		Charac player = new Charac(20,3,0.2,0);
-		Monster monster = new Monster((int)(10+Math.floor(Math.random()*7)-3), (1), (0.1), (0), "TESTSUBJECTSKELE");
+		Charac player = new Charac(40,7,0.2,0);
+		Monster monster = new Monster(
+				(int)((player.maxhealth/2)+Math.floor(Math.random()*(player.maxhealth/2))-(player.maxhealth/4)), 
+				(int)((player.attack/2)+Math.floor(Math.random()*(player.attack/2))-(player.attack/4)), 
+				(Math.random()/4), 
+				(int)((player.defense/2)+Math.floor(Math.random()*(player.defense/2))-(player.defense/4)), 
+				"skele"
+				);
 		Battle b = new Battle(player, monster);
 	}
 	
