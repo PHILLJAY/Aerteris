@@ -6,16 +6,19 @@ public class Monster extends charac {
 	public String[] moves = new String[4];
 	public int heal;
 	public int specialmove;
+	String[] n = new String[]{
+	"bob","bob","bob","bob","bob","bob","bob","bob","bob",
+	"fred","fred","fred","fred",
+	"skele",
+	"Cave Bat",
+	"Vampire",
+	"Suicide Bomber"
+	};
 	
-	public Monster(int maxhealth, int attack, double crit,int defense, String n) {
+	public Monster(int maxhealth, int attack, double crit,int defense) {
 		super(maxhealth,attack,crit,defense);
-		this.name=n;
+		this.name=n[(int)(Math.floor(Math.random()*n.length))];
 		// TODO Auto-generated constructor stub
-	}
-	
-	public Monster(int maxhealth, int attack, double crit, int defense,int heal, String n) {
-		super(maxhealth,attack,crit,defense);
-		this.heal=heal;
 	}
 	
 	public static void SpecialAttack( charac p,Monster m,String name) {
