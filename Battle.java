@@ -27,7 +27,7 @@ public class Battle {
 				monsterattack(x,y,"a");
 				System.out.println("> "+y.name +" deals " + (y.attack-x.defense) +" damage \n");
 			}else {
-				System.out.print("you won");
+				System.out.print("You Won!\n\n");
 				break;
 			}
 		}
