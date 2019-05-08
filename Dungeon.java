@@ -108,10 +108,10 @@ public class Dungeon {
 				break;
 			case "battle": 
 				Monster monster = new Monster(
-						(int)((player.maxhealth/2)+Math.floor(Math.random()*(player.maxhealth/2))-(player.maxhealth/4)), 
-						(int)((player.attack/2)+Math.floor(Math.random()*(player.attack/2))-(player.attack/4)), 
-						(Math.random()/4), 
-						(int)((player.defense/2)+Math.floor(Math.random()*(player.defense/2))-(player.defense/4))
+						(int)(5+Math.random()*11), 
+						(int)(1+Math.random()*3), 
+						(Math.random()), 
+						(int)(Math.random()*2)
 						);
 				Battle b = new Battle(player, monster);
 				if (player.currenthealth <= 0) return false;
