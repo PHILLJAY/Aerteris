@@ -12,7 +12,7 @@ public class Dungeon {
 
 	//constructor
 	int size;
-	private String[][] visitedRooms;
+	private String[][][] visitedRooms;
 	private int[] insideRoom;
 	private double wallChance;
 	private double farWallChance;
@@ -26,10 +26,11 @@ public class Dungeon {
 	private int[] done;
 	private int[] moveType = new int[4]; //values: 0=no, 1=travel, 2=move and remain
 	private Scanner input = new Scanner(System.in);
+	private int loc;
 
 	//symbols
 	private char playerSym = '@';
-	private char lootSym = 'C';
+	private char lootSym = 'H';
 	private char enemySym = 'E';
 
 	/* 
@@ -65,7 +66,7 @@ public class Dungeon {
 	 * @param lootChance - The chance that a pocket will have a loot. Less far walls will decrease the number of chests.
 	 * @param enemyChance - The chance that an enemy will spawn in a hallway. Less walls will increase number of enemies.
 	 * 
-	 * @see {@link #enterDungeon()}
+	 * @see {@link #enterDungeon(charac)}
 	 */
 	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, double lootChance, double enemyChance) {
 		w[16] = ' ';
@@ -77,7 +78,7 @@ public class Dungeon {
 		this.lootChance = lootChance;
 		this.enemyChance = enemyChance;
 		//to save
-		String[][] visitedRooms = new String[size][size];
+		visitedRooms = new String[size][size][4];
 		insideRoom = new int[]{size/2, size/2};
 
 		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
@@ -87,14 +88,16 @@ public class Dungeon {
 	/**
 	 * Starts the progression through the dungeon.
 	 * 
-	 * @see {@link #newRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
+	 * @return {@code true} if alive at the end, {@code false} if the player has died.
+	 * 
+	 * @see {@link #getRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public void enterDungeon(charac player) {
+	public boolean enterDungeon(charac player) {
 		String action = "new";
 		do {
 			switch (action) {
 			case "new":
-				newRoom();
+				getRoom();
 				System.out.print(room);
 				break;
 			case "stay":
@@ -102,21 +105,30 @@ public class Dungeon {
 				System.out.print(room);
 				break;
 			case "battle": 
-				//Monster monster = new Monster((int)(10+Math.floor(Math.random()*7)-3), (1), (0.1), (0), "TESTSUBJECTSKELE");
-				//Battle b = new Battle(player, monster);
+				Monster monster = new Monster(
+						(int)((player.maxhealth/2)+Math.floor(Math.random()*(player.maxhealth/2))-(player.maxhealth/4)), 
+						(int)((player.attack/2)+Math.floor(Math.random()*(player.attack/2))-(player.attack/4)), 
+						(Math.random()/4), 
+						(int)((player.defense/2)+Math.floor(Math.random()*(player.defense/2))-(player.defense/4))
+						);
+				Battle b = new Battle(player, monster);
+				if (player.currenthealth <= 0) return false;
 				refreshRoom();
 				System.out.print(room);
 				break;
 			case "loot":
 				//loot class? in dungeon or elsewhere?
-				System.out.print("[LOOTING...]\n\n");
+				System.out.print("Your health has been refilled!\n\n");
+				player.currenthealth = player.maxhealth;
 				refreshRoom();
 				System.out.print(room);
 				break;
 			}
+			saveRoom();
 			action = takeInput();
 		} while (!action.equals("leave"));
 		System.out.print("You left the dungeon.\n\n");
+		return true;
 	}
 
 	/**
@@ -141,24 +153,64 @@ public class Dungeon {
 	 */
 	private void generateRoom() {
 		done = new int[]{-1,-1,-1};
-		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
-		resetMoveType(0);
-		int a;
-		if (insideRoom[0] == 0) {
-			done[0] = 1;
-			generateWall(0);
-		} else if (insideRoom[0] == size - 1) {
-			done[0] = 2;
-			generateWall(0);
-		} 
-		if (done[0] == -1) a = 0;
-		else a = 1;
-		if (insideRoom[1] == 0) {
+		moveType = new int[]{1,1,1,1};
+		int a = 0;
+		int x = insideRoom[0];
+		int y = insideRoom[1];
+		if (insideRoom[0] == 0) { //edges
+			done[a] = 1;
+			generateWall(a);
+			a++;
+		} else if (visitedRooms[x-1][y][2] != null) if (visitedRooms[x-1][y][2].charAt(2) != '1') { //adjacent room
+			done[a] = 1;
+			generateWall(a);
+			a++;
+		}
+		if (insideRoom[0] == size - 1) {
+			done[a] = 2;
+			generateWall(a);
+			a++;
+		} else if (visitedRooms[x+1][y][2] != null) if (visitedRooms[x+1][y][2].charAt(1) != '1') {
+			done[a] = 2;
+			generateWall(a);
+			a++;
+		}
+		//different side
+		if (insideRoom[1] == 0) { //edges
 			done[a] = 0;
 			generateWall(a);
-		} else if (insideRoom[1] == size - 1) {
+			a++;
+		} else if (visitedRooms[x][y-1][2] != null) if (visitedRooms[x][y-1][2].charAt(3) != '1') { //adjacent room
+			done[a] = 0;
+			generateWall(a);
+			a++;
+		}
+		if (insideRoom[1] == size - 1) {
 			done[a] = 3;
 			generateWall(a);
+			a++;
+		} else if (visitedRooms[x][y+1][2] != null) if (visitedRooms[x][y+1][2].charAt(0) != '1') {
+			done[a] = 3;
+			generateWall(a);
+			a++;
+		}
+		//make hall
+		loc = findPlayer(0);
+		if (x > 0) if (visitedRooms[x-1][y][2] != null && loc != 1) if (visitedRooms[x-1][y][2].charAt(2) == '1') {
+			done[a] = 1;
+			a++;
+		}
+		if (x < size - 1) if (visitedRooms[x+1][y][2] != null && loc != 2) if (visitedRooms[x+1][y][2].charAt(1) == '1') {
+			done[a] = 2;
+			a++;
+		}
+		if (y > 0) if (visitedRooms[x][y-1][2] != null && loc != 0) if (visitedRooms[x][y-1][2].charAt(3) == '1') {
+			done[a] = 0;
+			a++;
+		}
+		if (y < size - 1) if (visitedRooms[x][y+1][2] != null && loc != 3) if (visitedRooms[x][y+1][2].charAt(0) == '1') {
+			done[a] = 3;
+			a++;
 		}
 		for (int i = 0; i < 3; i++) {
 			if (done[i] == -1) {
@@ -208,7 +260,7 @@ public class Dungeon {
 	/**
 	 * Updates {@code room} String to be printed with the new walls and contents generated.
 	 * <p>
-	 * Private method called in the {@link #newRoom()} private method and the {@link #enterDungeon()} public method.
+	 * Private method called in the {@link #newRoom()} private method, the {@link #getRoom()} private method and the {@link #enterDungeon(charac)} public method.
 	 */
 	private void refreshRoom() {
 		room = "" +
@@ -226,7 +278,7 @@ public class Dungeon {
 	/**
 	 * Generates a new room in the dungeon, including walls and contents.
 	 * <p>
-	 * Private method called in the {@link #enterDungeon()} public method.
+	 * Private method called in the {@link #getRoom} private method.
 	 * 
 	 * @see {@link #generateRoom()}, {@link #generateContents()}, {@link #refreshRoom()}
 	 */
@@ -237,18 +289,69 @@ public class Dungeon {
 	}
 
 	/**
-	 * {@code unused}
-	 * <p>
 	 * Stores location, walls, and remaining contents of a room. Will be stored in a save file if game is saved while in a dungeon.
+	 * <p>
+	 * Private method called in the {@link #enterDungeon(charac)} private method.
 	 */
-	public void saveRoom() {
-		//location, 0.1.2.3.4.5
+	private void saveRoom() {
+		char[] cCopy = c.clone();
+		loc = findPlayer(0);
+		cCopy[loc] = ' ';
+		int x = insideRoom[0];
+		int y = insideRoom[1];
+		visitedRooms[x][y][0] = "" +
+				w[0] +
+				w[1] +
+				w[2] +
+				w[3] +
+				w[4] +
+				w[5] +
+				w[6] +
+				w[7] +
+				w[8] +
+				w[9] +
+				w[10] +
+				w[11] +
+				w[12] +
+				w[13] +
+				w[14] +
+				w[15] +
+				w[16] +
+				w[17];
+		visitedRooms[x][y][1] = "" + cCopy[0] + cCopy[1] + cCopy[2] + cCopy[3];
+		visitedRooms[x][y][2] = "" + moveType[0] + moveType[1] + moveType[2] + moveType[3];
+		visitedRooms[x][y][3] = "" + loc;
+		//System.out.println(visitedRooms[insideRoom[0]][insideRoom[1]]);
+	}
+
+	/**
+	 * Decides whether to make a new room or copy an existing one.
+	 * <p>
+	 * Private method called in the {@link #enterDungeon(charac)} public method.
+	 * 
+	 * @see {@link #newRoom()}, {@link #findPlayer(int)}, {@link #refreshRoom()}
+	 */
+	private void getRoom() {
+		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
+		int x = insideRoom[0];
+		int y = insideRoom[1];
+		if (visitedRooms[x][y][0] == null) {
+			newRoom();
+		} else {
+			w = visitedRooms[x][y][0].toCharArray();
+			loc = findPlayer(0);
+			c = visitedRooms[x][y][1].toCharArray();
+			c[loc] = playerSym;
+			moveType = visitedRooms[x][y][2].chars().map(c -> c-'0').toArray(); //ngl copy pasted this one but I think I get it; it turns a string into an int array
+			refreshRoom();
+		}
 	}
 
 	/**
 	 * Finds the location of the player in a room.
 	 * <p>
-	 * Private method called in the {@link #generateRoom()} private method and {@link #tryMove(String)} private method.
+	 * Private method called in the {@link #generateRoom()} private method, the {@link #saveRoom()} private method, 
+	 * the {@link #getRoom()} private method and {@link #tryMove(String)} private method.
 	 * 
 	 * @param i - Index to search from; should always be called with initial value {@code 0}.
 	 * 
@@ -309,7 +412,7 @@ public class Dungeon {
 	 * Allows the user to input a {@code String} corresponding to movement or menu options. Will loop until a movement is received.
 	 * All inputs can be printed to the console with {@link #listInputs()}.
 	 * <p>
-	 * Private method called in the {@link #enterDungeon()} public method.
+	 * Private method called in the {@link #enterDungeon(charac)} public method.
 	 * 
 	 * @return {@code "leave"} if the input was leave, {@code "new"} if moving to a new room, {@code "stay"} if staying in the room, {@code "battle"} if entering a battle, and {@code "loot"} if looting.
 	 *
@@ -432,19 +535,6 @@ public class Dungeon {
 	}
 
 	/**
-	 * Sets all indexes in the array ({@code moveType}) to {@code 1} (open).
-	 * <p>
-	 * Private method called in the {@link #generateRoom()} private method.
-	 * 
-	 * @param i - Index to search from; should always be called with initial value {@code 0}.
-	 */
-	private Object resetMoveType(int i) {
-		if (i > 3) return null;
-		moveType[i] = 1;
-		return resetMoveType(i+1);
-	}
-
-	/**
 	 * Lists all valid inputs for {@link #takeInput()}.
 	 * <p>
 	 * Private method called in the {@link #takeInput()} private method.
@@ -457,12 +547,17 @@ public class Dungeon {
 				"\"s\" - move down" + "\n" +
 				"\"d\" - move right" + "\n" +
 				"\"inventory\" - access inventory (does nothing)" + "\n" +
+				"\"portal\" - enter portal if it is in the room (does nothing)" + "\n" +
+				"\"save\" - saves dungeon progress and exits game (does nothing)" + "\n" +
 				"\"leave\" - leave dungeon and return to surface" + "\n" +
 				"\n"
 				);
 	}
 
 }
+
+
+
 
 
 
