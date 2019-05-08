@@ -344,7 +344,10 @@ public class Dungeon {
 			loc = findPlayer(0);
 			c = visitedRooms[x][y][1].toCharArray();
 			c[loc] = playerSym;
-			moveType = visitedRooms[x][y][2].chars().map(c -> c-'0').toArray(); //ngl copy pasted this one but I think I get it; it turns a string into an int array
+			//moveType = visitedRooms[x][y][2].chars().map(c -> c-'0').toArray(); //ngl copy pasted this one but I think I get it; it turns a string into an int array
+			for (int i = 0; i < moveType.length; i++) {
+				moveType[i] = Character.getNumericValue(visitedRooms[x][y][2].charAt(i));
+			}
 			refreshRoom();
 		}
 	}
@@ -557,12 +560,3 @@ public class Dungeon {
 	}
 
 }
-
-
-
-
-
-
-
-
-
