@@ -66,7 +66,11 @@ public class Battle {
 	public static void BasicMonsterAttack(charac p, Monster m) {
 		if(m.name.equals("fibonacci")) {
 			Monster.SpecialAttack(p, m, m.name);
-		}else{
+		}else if(m.name.equals("Mad Scientist")) {
+			System.out.println("> "+m.name +" deals " + (m.attack*m.charge-p.defense) +" damage \n");
+			p.currenthealth+=p.defense-(m.attack*m.charge);
+		}
+			else{
 			if(Math.random()<=m.crit) {
 				p.currenthealth+=p.defense-m.attack*2;
 				System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
@@ -77,9 +81,12 @@ public class Battle {
 	}
 
 	public char move() {
-		System.out.print("Whatchu wanna do: \nAttack \nRun \nItem \n");
-		char c = scan.nextLine().charAt(0);
-		return c;		
+		while(true) {
+			System.out.print("Whatchu wanna do: \nAttack \nRun \nItem \n");
+			char c = scan.nextLine().toLowerCase().charAt(0);
+			if(c=='a'||c=='i'||c=='r') return c;	
+			else System.out.println("Invalid command \n");
+		}	
 	}
 
 	public static boolean isDead(charac x) {
@@ -97,7 +104,5 @@ public class Battle {
 	}
 
 
-
-
-
 }
+
