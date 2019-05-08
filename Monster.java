@@ -32,6 +32,7 @@ public class Monster extends charac {
 		this.name=n;
 		// TODO Auto-generated constructor stub
 	}
+	
 	public static void SpecialAttack( charac p,Monster m,String name) {
 		switch(name) {
 	case "skele":
@@ -42,8 +43,9 @@ public class Monster extends charac {
 		Battle.lifesteal(p,m);
 		break;
 	case "Suicide Bomber":
-		System.out.println(">"+m.name+" explodes for "+( m.attack+((m.maxhealth-m.currenthealth)/3))+ "\n" );
+		System.out.println("> "+m.name+" explodes for "+( m.attack+((m.maxhealth-m.currenthealth)/3))+ "\n" );
 		p.currenthealth+=p.defense-( m.attack+((m.maxhealth-m.currenthealth)/3));
+		break;
 	case "Blood Priest":
 		if(m.currenthealth>m.attack) {
 		System.out.println("> "+m.name+" uses blood magic and sacrifices " +m.attack+" of his health and deals " +m.attack*2+" damage! \n");
@@ -59,6 +61,7 @@ public class Monster extends charac {
 	case "Mad Scientist":
 		System.out.println("> " + m.name+ "mixes chemicals maliciously \n");
 		m.charge+=1;
+		break;
 		}
 	}
 	
