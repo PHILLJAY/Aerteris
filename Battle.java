@@ -69,6 +69,7 @@ public class Battle {
 		}else if(m.name.equals("Mad Scientist")) {
 			System.out.println("> "+m.name +" deals " + (m.attack*m.charge-p.defense) +" damage \n");
 			p.currenthealth+=p.defense-(m.attack*m.charge);
+			m.charge=1;
 		}
 			else{
 			if(Math.random()<=m.crit) {
