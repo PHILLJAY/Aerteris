@@ -45,30 +45,34 @@ public class Battle {
 	public static void monsterattack(charac p, Monster m){
 		double r = Math.random();
 
-		if(r<0.7) {
+		if(r<0.65) {
 			BasicMonsterAttack(p,m);
 		} else {
-			Monster.SpecialAttack(p, m,m.name);
+			Monster.SpecialAttack(p,m,m.name);
 		}
-
-
 	}
+
+
 	public static void lifesteal(charac p, Monster m) {
 		System.out.println("> "+m.name +" SUCKS " + (m.attack-p.defense) +" health! \n");
 		if(m.attack+m.currenthealth<=m.maxhealth) {
 			p.currenthealth+=p.defense-(m.attack);
 			m.currenthealth+=m.attack;
-		} else {
+		} else { 
 			BasicMonsterAttack(p,m);
 		}
 	}
 
 	public static void BasicMonsterAttack(charac p, Monster m) {
-		if(Math.random()<=m.crit) {
-			p.currenthealth+=p.defense-m.attack*2;
-			System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
-		}else {	p.currenthealth+=p.defense-m.attack;
-		System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
+		if(m.name.equals("fibonacci")) {
+			Monster.SpecialAttack(p, m, m.name);
+		}else{
+			if(Math.random()<=m.crit) {
+				p.currenthealth+=p.defense-m.attack*2;
+				System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
+			}else {	p.currenthealth+=p.defense-m.attack;
+			System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
+			}
 		}
 	}
 
