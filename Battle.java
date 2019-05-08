@@ -84,9 +84,13 @@ public class Battle {
 	public char move() {
 		while(true) {
 			System.out.print("Whatchu wanna do: \nAttack \nRun \nItem \n");
-			char c = scan.nextLine().toLowerCase().charAt(0);
-			if(c=='a'||c=='i'||c=='r') return c;	
-			else System.out.println("Invalid command \n");
+			char c = scan.next().toLowerCase().charAt(0);
+			if(c=='a'||c=='i'||c=='r') {
+				return c;	
+			}
+			else {
+				System.out.println("Invalid command \n");
+			}
 		}	
 	}
 
