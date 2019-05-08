@@ -59,7 +59,7 @@ public class Monster extends charac {
 		p.currenthealth+=p.defense-fibonacciy(fibonacci+1);
 		break;
 	case "Mad Scientist":
-		System.out.println("> " + m.name+ "mixes chemicals maliciously \n");
+		System.out.println("> " + m.name+ "is mixing chemicals.... \n");
 		m.charge+=1;
 		break;
 		}
