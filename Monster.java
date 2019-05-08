@@ -7,13 +7,17 @@ public class Monster extends charac {
 	public int heal;
 	public int specialmove;
 	public static int fibonacci=0;
+	public static int charge=1;
+	
+	
 	String[] n = new String[]{
 	"skele",
 	"Cave Bat",
 	"Vampire",
 	"Suicide Bomber",
 	"Blood Priest",
-	"fibonacci"
+	"fibonacci",
+	"Mad Scientist"
 	};
 	
 	public Monster(int maxhealth, int attack, double crit,int defense) {
@@ -38,20 +42,23 @@ public class Monster extends charac {
 		Battle.lifesteal(p,m);
 		break;
 	case "Suicide Bomber":
-		System.out.println(">"+m.name+" explodes for "+( m.attack+((m.maxhealth-m.currenthealth)/3)) );
+		System.out.println(">"+m.name+" explodes for "+( m.attack+((m.maxhealth-m.currenthealth)/3))+ "\n" );
 		p.currenthealth+=p.defense-( m.attack+((m.maxhealth-m.currenthealth)/3));
 	case "Blood Priest":
 		if(m.currenthealth>m.attack) {
-		System.out.println(m.name+" uses blood magic and sacrifices " +m.attack+" of his health and deals " +m.attack*2+" damage!");
+		System.out.println("> "+m.name+" uses blood magic and sacrifices " +m.attack+" of his health and deals " +m.attack*2+" damage! \n");
 		p.currenthealth+=p.defense-(m.attack*2);
 		m.currenthealth-=m.attack;} 
 		else Battle.BasicMonsterAttack(p, m);
 		break;
 	case "fibonacci":
 		fibonacci+=1;
-		System.out.println(m.name+" DEALS "+fibonacciy(fibonacci+1)+" damage!");
+		System.out.println("> "+m.name+" DEALS "+fibonacciy(fibonacci+1)+" damage! \n");
 		p.currenthealth+=p.defense-fibonacciy(fibonacci+1);
-		;
+		break;
+	case "Mad Scientist":
+		System.out.println("> " + m.name+ "mixes chemicals maliciously \n");
+		m.charge+=1;
 		}
 	}
 	
