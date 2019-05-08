@@ -6,11 +6,14 @@ public class Monster extends charac {
 	public String[] moves = new String[4];
 	public int heal;
 	public int specialmove;
+	public static int fibonacci=0;
 	String[] n = new String[]{
 	"skele",
 	"Cave Bat",
 	"Vampire",
-	"Suicide Bomber"
+	"Suicide Bomber",
+	"Blood Priest",
+	"fibonacci"
 	};
 	
 	public Monster(int maxhealth, int attack, double crit,int defense) {
@@ -18,6 +21,8 @@ public class Monster extends charac {
 		this.name=n[(int)(Math.floor(Math.random()*n.length))];
 		// TODO Auto-generated constructor stub
 	}
+	
+	//just to test specific monsters
 	public Monster(int maxhealth, int attack, double crit,int defense,String n) {
 		super(maxhealth,attack,crit,defense);
 		this.name=n;
@@ -35,13 +40,29 @@ public class Monster extends charac {
 	case "Suicide Bomber":
 		System.out.println(">"+m.name+" explodes for "+( m.attack+((m.maxhealth-m.currenthealth)/3)) );
 		p.currenthealth+=p.defense-( m.attack+((m.maxhealth-m.currenthealth)/3));
+	case "Blood Priest":
+		if(m.currenthealth>m.attack) {
+		System.out.println(m.name+" uses blood magic and sacrifices " +m.attack+" of his health and deals " +m.attack*2+" damage!");
+		p.currenthealth+=p.defense-(m.attack*2);
+		m.currenthealth-=m.attack;} 
+		else Battle.BasicMonsterAttack(p, m);
 		break;
+	case "fibonacci":
+		fibonacci+=1;
+		System.out.println(m.name+" DEALS "+fibonacciy(fibonacci+1)+" damage!");
+		p.currenthealth+=p.defense-fibonacciy(fibonacci+1);
+		;
 		}
 	}
 	
 
+	public static int fibonacciy(int x) {
+		if(x==0)return 0;
+		else if(x==1) return 1;
+		else return fibonacciy(x-1)+fibonacciy(x-2);
+	}
 	
-	
+
 	public int dropgold(int range) {
 		return (int) Math.random()*range;
 	}
