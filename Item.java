@@ -1,5 +1,3 @@
-
-
 public class Item {
 	public static int health;
 	public static int defense;
