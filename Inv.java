@@ -1,13 +1,12 @@
 
+
 public class Inv {
 	static //constructor
-	/*
-	 * 
-	 */	
-	int inventory[] = new int[8];
-	public static void place(int x, int y) {
-		inventory[x] = y;
+	Item[] inventory = new Item[8];
+	public void place(int x, int y) {
+		inventory[x].setType(y);
 	}
+	
 	public static String printItem(int z) {
 		switch(z) {
 		case 0:
@@ -22,24 +21,16 @@ public class Inv {
 		return"bazinga";
 	}	
 
-	public static void showInv() {
+	public void showInv() {
 		for(int z = 0; z<8;z++) {
-			System.out.println(printItem(inventory[z]));
+			System.out.println((inventory[z]));
 		}
 	}
-	public static String printDesc(int z) {
-		switch(inventory[z]) {
-		case 0:
-			return  "Its empty, what why would you want to check this";
-		case 1:
-			return"Sharp and pointy, OOF it hurts";
-		case 2:
-			return"Chug Jug Boys";
-		case 3:
-			return"V I R T U A L   S H E L F";
-		}
-		return"bazinga";
-	}	
+//	public static String printDesc(int z) {
+//		switch(inventory[z]) {
+//		}
+//		return"bazinga";
+//	}	
 
 
 	/*First int is the type of item
@@ -56,11 +47,11 @@ public class Inv {
 	 * 2 - Small Health Potion +10 health
 	 * 3 - Shelf -10 Health (you hit yourself)
 	 */
+//
+//	public static void main(String[] args) {
+//		Inv test =  new Inv();
+//		test.place(0, 2);
 
-	public static void main(String[] args) {
-		Inv test =  new Inv();
-		test.place(0, 2);
-
-	}
+//	}
 
 }
