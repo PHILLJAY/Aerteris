@@ -1,4 +1,3 @@
-package Aerteris;
 import java.util.*;
 
 public class Battle {
