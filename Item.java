@@ -1,11 +1,11 @@
 public class Item {
-	public static int health;
-	public static int defense;
-	public static int attack;
-	public static double crit;
-	public static int mana;
-	public static boolean equiped;
-	public static int type;
+	public int health;
+	public int defense;
+	public int attack;
+	public double crit;
+	public int mana;
+	public boolean equiped;
+	public int type;
 	/*Item types;
 	 * 0 = sword
 	 * 1 = shield
@@ -41,22 +41,22 @@ public class Item {
 	}
 	//set stuff below
 
-	public static void equip() {
+	public void equip() {
 		equiped =! equiped;
 	}
-	public static void setHealth(int z) {
+	public void setHealth(int z) {
 		health = z;
 	}
-	public static void setDefense(int z) {
+	public void setDefense(int z) {
 		defense = z;
 	}
-	public static void setAttack(int z) {
+	public void setAttack(int z) {
 		attack = z;
 	}
-	public static void setCrit(double z) {
+	public void setCrit(double z) {
 		crit = z;
 	}
-	public static void setMana(int z) {
+	public void setMana(int z) {
 		mana = z;
 	}
 	public void setType(int y) {
@@ -65,19 +65,19 @@ public class Item {
 
 	//get stuff below
 
-	public static int getHealth() {
+	public int getHealth() {
 		return health;
 	}
-	public static int getDefense() {
+	public int getDefense() {
 		return defense;
 	}
-	public static int getAttack() {
+	public int getAttack() {
 		return attack;
 	}
-	public static double getCrit() {
+	public double getCrit() {
 		return crit;
 	}	
-	public static int getMana() {
+	public int getMana() {
 		return mana;
 	}
 
