@@ -1,5 +1,3 @@
-
-
 public class Inv {
 	static //constructor
 	Item[] inventory = new Item[8];
