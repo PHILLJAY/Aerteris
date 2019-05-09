@@ -1,5 +1,3 @@
-package Aerteris;
-
 public class charac {
 
 	public int maxhealth;
