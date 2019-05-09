@@ -1,5 +1,3 @@
-package Aerteris;
-
 public class Monster extends charac {
 	
 	public String name;
