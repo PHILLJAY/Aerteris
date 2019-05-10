@@ -1,5 +1,5 @@
 public class Inv {
-	static //constructor
+	//constructor
 	Item[] inventory = new Item[8];
 	public void place(int x, int y) {
 		inventory[x].setType(y);
