@@ -14,6 +14,7 @@ public class Game {
 	private File file;
 	private BufferedReader br;
 	private BufferedWriter bw, bwr;
+	charac player;
 
 	boolean spaceMode = false;
 	char s = ' ';
@@ -21,12 +22,12 @@ public class Game {
 
 
 	public Game() {
-		
+
 		dir = upDir(System.getProperty("user.dir")) + "\\" + "AerterisSaves";
 		location = new File(dir);
 
 		clearConsole();
-		
+
 		if (!location.exists()) {
 			if (location.mkdir()) {
 				System.out.print("First time startup save folder created. Hit \"enter\" to continue.");
@@ -43,14 +44,14 @@ public class Game {
 				"|                                                          |\n" +
 				"|                                                          |\n" +
 				"|           You will want about this much space            |\n" +
-				"|           in the console to play comfortably             |\n" +
+				"|           in the console to play comfortably.            |\n" +
 				"|                                                          |\n" +
-				"|             Press any button to continue...              |\n" +
-				"|                                                          |\n" +
-				"|                                                          |\n" +
+				"|                Hit \"enter\" to continue...                |\n" +
 				"|                                                          |\n" +
 				"|                                                          |\n" +
-				"+----------------------------------------------------------+\n"
+				"|                                                          |\n" +
+				"|                                                          |\n" +
+				"+----------------------------------------------------------+"
 				);
 		in.nextLine();
 		boolean flag = false;
@@ -64,14 +65,14 @@ public class Game {
 					" "+s+"          |  | |___ |  \\  |  |___ |  \\ | ___]             \n" +
 					"                                                            \n" +
 					"           "+s+"         [ new ]   [ load ]       "+s+"        "+s+"    \n" +
-					"                                                            \n" +
+					"                         [ blank ]                        \n" +
 					"    "+s+"               "+s+"          "+s+"                         "+s+"  \n" +
 					"            "+s+"                                "+s+"              \n" +
 					"                            "
 					);
 
-			String startAction;
-			startAction = in.next();
+			String startAction = "";
+			if (in.hasNext()) startAction = in.nextLine();
 			if (startAction.equals("new")) {
 				try {
 					newSave();
@@ -80,7 +81,16 @@ public class Game {
 				} 
 				flag = true;
 			} else if (startAction.equals("load")) {
-				loadSave(); 
+				try {
+					loadSave();
+				} catch (IOException e) {
+					e.getMessage();
+				} 
+				flag = true;
+			} else if (startAction.equals("blank")) {
+				clearConsole();
+				player = new charac(20,3,0.2,0);
+				play();
 				flag = true;
 			} else if (startAction.equals("space")) {
 				spaceMode = true; 
@@ -89,7 +99,7 @@ public class Game {
 		} while (!flag);
 
 	}
-	
+
 	private String upDir(String dir) {
 		if (dir.charAt(dir.length() - 1) != '\\') return upDir(dir.substring(0, dir.length() - 1));
 		return dir;
@@ -101,7 +111,6 @@ public class Game {
 
 		while (true) {
 			System.out.print("Enter file name: ");
-			if (in.hasNextLine()) in.nextLine();
 			name = in.nextLine();
 			file = new File(dir + "\\" + name + ".txt");
 			if (name.length() < 1) {System.out.print("Name is too short!\n");}
@@ -120,16 +129,55 @@ public class Game {
 				} else {System.out.print("File not overwritten.\n");}
 			}
 		}
-		charac player = new charac(20,3,0.2,0);
-		play();
 		
+		clearConsole();
+		player = new charac(20,3,0.2,0);
+		play();
+
 	}
 
-	private void loadSave() {
+	private void loadSave() throws IOException {
 
+		clearConsole();
+
+		File[] f = location.listFiles();
+		if (f == null) {
+			System.out.print("No save files have been found - switching to file creation.\nHit \"enter\" to continue. ");
+			in.nextLine();
+			newSave();
+		} else {
+			System.out.print("Existing save files:\n");
+			for (int i = 0; i < f.length; i++) {
+				System.out.print(f[i].getName().substring(0,f[i].getName().length() - 4) + "\n");
+			}
+			System.out.print("\n");
+
+			while (true) {
+				System.out.print("Enter file name: ");
+				name = in.nextLine();
+				file = new File(dir + "\\" + name + ".txt");
+				if (!file.exists()) {
+					System.out.print("File does not exist.\n");
+				} else {
+					System.out.print("File selected. Hit \"enter\" to continue. ");
+					in.nextLine();
+					break;
+				}
+			}
+			
+			//load file
+			
+			clearConsole();
+			play();
+
+		}
 	}
 
 	private void play() {
+
+		Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25);
+
+		d.enterDungeon(player);
 
 	}
 
