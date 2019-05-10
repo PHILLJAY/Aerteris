@@ -129,6 +129,11 @@ public class Dungeon {
 				refreshRoom();
 				System.out.print(room);
 				break;
+			case "save":
+				break;
+			case "exit":
+				System.out.print("Exiting game.");
+				return false;
 			}
 			saveRoom();
 			action = takeInput();
@@ -455,8 +460,9 @@ public class Dungeon {
 				System.out.print("[this is your inventory]\n");
 				//manageInventory?
 				break;
-			case "leave":
-				return "leave";
+			case "leave": return "leave";
+			case "save": return "save";
+			case "exit": return "exit";
 			}
 		}
 	}
@@ -561,8 +567,9 @@ public class Dungeon {
 				"\"d\" - move right" + "\n" +
 				"\"inventory\" - access inventory (does nothing)" + "\n" +
 				"\"portal\" - enter portal if it is in the room (does nothing)" + "\n" +
-				"\"save\" - saves dungeon progress and exits game (does nothing)" + "\n" +
 				"\"leave\" - leave dungeon and return to surface" + "\n" +
+				"\"save\" - saves dungeon progress (does nothing)" + "\n" +
+				"\"exit\" - exits game, DOES NOT SAVE" + "\n" +
 				"\n"
 				);
 	}
