@@ -30,8 +30,9 @@ public class Dungeon {
 
 	//symbols
 	private char playerSym = '@';
-	private char lootSym = 'H';
+	private char lootSym = 'C';
 	private char enemySym = 'E';
+	private char healSym = 'H';
 
 	/* 
 	 * Layout:
@@ -118,6 +119,11 @@ public class Dungeon {
 				break;
 			case "loot":
 				//loot class? in dungeon or elsewhere?
+				System.out.print("[LOOTING...]\n\n");
+				refreshRoom();
+				System.out.print(room);
+				break;
+			case "heal":
 				System.out.print("Your health has been refilled!\n\n");
 				player.currenthealth = player.maxhealth;
 				refreshRoom();
@@ -249,7 +255,10 @@ public class Dungeon {
 		for (int i = 0; i < 4; i++) {
 			if (c[i] == ' ') {
 				if (moveType[i] == 2) {
-					if (Math.random() < lootChance) c[i] = lootSym;
+					if (Math.random() < lootChance) {
+						char[] syms = new char[]{lootSym,healSym};
+						c[i] = syms[(int)(Math.random()*(syms.length))];
+					}
 				} else if (moveType[i] == 1) {
 					if (Math.random() < enemyChance) c[i] = enemySym;
 				}
@@ -417,14 +426,13 @@ public class Dungeon {
 	 * <p>
 	 * Private method called in the {@link #enterDungeon(charac)} public method.
 	 * 
-	 * @return {@code "leave"} if the input was leave, {@code "new"} if moving to a new room, {@code "stay"} if staying in the room, {@code "battle"} if entering a battle, and {@code "loot"} if looting.
+	 * @return {@code String} corresponding to action to be taken.
 	 *
 	 * @see {@link #listInputs()}, {@link #tryMove(String)}
 	 */
 	private String takeInput() {
 		int r;
 		while (true) {
-			//while (input.hasNext()) input.next(); //clear queue
 			System.out.print("Input: ");
 			String in = input.next();
 			switch (in) {
@@ -438,6 +446,7 @@ public class Dungeon {
 					case 2: return "stay";
 					case 3: return "battle";
 					case 4: return "loot";
+					case 5: return "heal";
 					}
 				} else {
 					break;
@@ -459,7 +468,7 @@ public class Dungeon {
 	 * 
 	 * @param direction - {@code "w"}, {@code "a"}, {@code "s"}, or {@code "d"}.
 	 * 
-	 * @return {@code 0} if unsuccessful, {@code 1} if passing to another room, {@code 2} if staying in the room, {@code 3} if entering a battle, and {@code 4} if looting.
+	 * @return {@code int} corresponding to movement success and type.
 	 *
 	 * @see {@link #resetContents(int)}, {@link #refreshCoords(String)}, {@link #findPlayer(int)}
 	 */
@@ -500,6 +509,7 @@ public class Dungeon {
 			if (c[a] == ' ' || c[a] == playerSym);
 			else if (c[a] == enemySym) ret = 3;
 			else if (c[a] == lootSym) ret = 4;
+			else if (c[a] == healSym) ret = 5;
 			c[findPlayer(0)] = ' ';
 			c[a] = playerSym;
 			return ret;
@@ -544,7 +554,7 @@ public class Dungeon {
 	 */
 	private void listInputs() {
 		System.out.print("" +
-				"\"list\" - list all acceptable inputs (what this does)" + "\n" +
+				"\"list\" - list all acceptable inputs" + "\n" +
 				"\"w\" - move up" + "\n" +
 				"\"a\" - move left" + "\n" +
 				"\"s\" - move down" + "\n" +
