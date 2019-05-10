@@ -17,14 +17,14 @@ public class Battle {
 					attack(x,y);
 				} else if(n=='r') { System.out.println("You ran away!\n"); break;}
 			} else {
-				System.out.println("You died");
+				System.out.println("You died... Exiting game.");
 				break;
 			}
 
 			if(isMonsterDead(y)==false) {
 				monsterattack(x,y);
 			}else {
-				System.out.println("you won");
+				System.out.println("You won!");
 				break;
 			}
 		}
