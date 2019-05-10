@@ -3,10 +3,15 @@ public class Debug {
 	public static void main(String[] args) {
 
 		//inventory();
-		dungeon();
+		//dungeon();
 		//doWall();
 		//fighting();
+		game();
 
+	}
+	
+	public static void game() {
+		Game g = new Game();
 	}
 	
 	public static void inventory() {
@@ -21,6 +26,7 @@ public class Debug {
 
 	public static void dungeon() {
 		int s = 8;
+		
 		charac player = new charac(20,3,0.2,0);
 
 		Dungeon d = new Dungeon(s, 0.7, 0.4, 0.1, 0.25, 0.25); //decent setup for basic dungeon according to individual tests: n, 0.7, 0.4, 0.1, 0.25, 0.25
