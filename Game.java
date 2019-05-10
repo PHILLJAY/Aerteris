@@ -101,6 +101,7 @@ public class Game {
 
 		while (true) {
 			System.out.print("Enter file name: ");
+			if (in.hasNextLine()) in.nextLine();
 			name = in.nextLine();
 			file = new File(dir + "\\" + name + ".txt");
 			if (name.length() < 1) {System.out.print("Name is too short!\n");}
