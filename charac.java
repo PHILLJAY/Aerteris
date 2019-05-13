@@ -1,20 +1,25 @@
+
 public class charac {
 
 	public int maxhealth;
+	public int gold;
 	public int defense;
 	public int attack;
 	public double crit;
 	public int currenthealth;
 	public int mana;
+	public int tempdamage;
 	
 	
-	public charac(int maxhealth, int attack,double crit, int defense){
+	public charac(int maxhealth, int attack,double crit, int defense,int gold){
 		this.maxhealth = maxhealth;
 		this.defense = defense;
 		this.attack=attack;
 		this.currenthealth=maxhealth;
 		this.crit=crit;
+		this.gold=gold;
 	}
+	
 	
 	
 	public static void main(String args[]){
