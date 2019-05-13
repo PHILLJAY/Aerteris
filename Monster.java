@@ -1,3 +1,5 @@
+
+
 public class Monster extends charac {
 	
 	public String name;
@@ -15,18 +17,21 @@ public class Monster extends charac {
 	"Suicide Bomber",
 	"Blood Priest",
 	"fibonacci",
-	"Mad Scientist"
+	"Mad Scientist",
+	"Copy Cat",
+	"Gran Torino",
+	"Executioner"
 	};
 	
-	public Monster(int maxhealth, int attack, double crit,int defense) {
-		super(maxhealth,attack,crit,defense);
+	public Monster(int maxhealth, int attack, double crit,int defense,int gold) {
+		super(maxhealth,attack,crit,defense,gold);
 		this.name=n[(int)(Math.floor(Math.random()*n.length))];
 		// TODO Auto-generated constructor stub
 	}
 	
 	//just to test specific monsters
-	public Monster(int maxhealth, int attack, double crit,int defense,String n) {
-		super(maxhealth,attack,crit,defense);
+	public Monster(int maxhealth, int attack, double crit,int defense,int gold,String n) {
+		super(maxhealth,attack,crit,defense,gold);
 		this.name=n;
 		// TODO Auto-generated constructor stub
 	}
@@ -59,6 +64,19 @@ public class Monster extends charac {
 	case "Mad Scientist":
 		System.out.println("> " + m.name+ "is mixing chemicals.... \n");
 		m.charge+=1;
+		break;
+	case "Copy Cat":
+		System.out.println("> "+m.name+" COPIES your attack and deals "+(p.tempdamage)+" damage" );
+		p.currenthealth-=p.tempdamage+p.defense;
+		break;
+	case "Executioner":
+		System.out.println("> "+m.name + " DROPS the guillitine and deals "+(((p.maxhealth-p.currenthealth)/2)-p.defense)+" damage! \n");
+		p.currenthealth+=p.defense-((p.maxhealth-p.currenthealth)/2);
+		break;
+	case "Gran Torino":
+		System.out.println("> GET OFF MY LAWN \n");		
+		Battle.BasicMonsterAttack(p, m);
+		Battle.BasicMonsterAttack(p, m);
 		break;
 		}
 	}
