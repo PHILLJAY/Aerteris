@@ -13,7 +13,7 @@ public class Game {
 	private File location;
 	File file;
 	private BufferedReader br;
-	BufferedWriter bw, bwr;
+	private BufferedWriter bw, bwr;
 	charac player;
 
 	boolean spaceMode = false;
@@ -141,7 +141,7 @@ public class Game {
 		clearConsole();
 
 		File[] f = location.listFiles();
-		if (f == null) {
+		if (f.length == 0) {
 			System.out.print("No save files have been found - switching to file creation.\nHit \"enter\" to continue. ");
 			in.nextLine();
 			newSave();
@@ -188,7 +188,7 @@ public class Game {
 
 	private void play() {
 
-		Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25);
+		Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, file);
 
 		d.enterDungeon(player);
 

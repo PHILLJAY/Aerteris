@@ -9,7 +9,7 @@ import java.io.*;
  * 
  * @author Gavin Jameson
  */
-public class Dungeon extends Game{
+public class Dungeon {
 
 	//constructor
 	int size;
@@ -34,6 +34,12 @@ public class Dungeon extends Game{
 	private char lootSym = 'C';
 	private char enemySym = 'E';
 	private char healSym = 'H';
+	
+	//saving
+	File file;
+	BufferedWriter bw, bwr;
+	private boolean saved = true;
+	private String check;
 
 	/* 
 	 * Layout:
@@ -70,7 +76,7 @@ public class Dungeon extends Game{
 	 * 
 	 * @see {@link #enterDungeon(charac)}
 	 */
-	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, double lootChance, double enemyChance) {
+	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, double lootChance, double enemyChance, File file) {
 		w[16] = ' ';
 		w[17] = '+';
 		this.size = size;
@@ -80,6 +86,7 @@ public class Dungeon extends Game{
 		this.lootChance = lootChance;
 		this.enemyChance = enemyChance;
 		//to save
+		this.file = file;
 		visitedRooms = new String[size][size][4];
 		insideRoom = new int[]{size/2, size/2};
 
@@ -101,10 +108,12 @@ public class Dungeon extends Game{
 			case "new":
 				getRoom();
 				System.out.print(room);
+				saved = false;
 				break;
 			case "stay":
 				refreshRoom();
 				System.out.print(room);
+				saved = false;
 				break;
 			case "battle": 
 				Monster monster = new Monster(
@@ -117,46 +126,70 @@ public class Dungeon extends Game{
 				if (player.currenthealth <= 0) return false;
 				refreshRoom();
 				System.out.print(room);
+				saved = false;
 				break;
 			case "loot":
 				//loot class? in dungeon or elsewhere?
 				System.out.print("[LOOTING...]\n\n");
 				refreshRoom();
 				System.out.print(room);
+				saved = false;
 				break;
 			case "heal":
 				System.out.print("Your health has been refilled!\n\n");
 				player.currenthealth = player.maxhealth;
 				refreshRoom();
 				System.out.print(room);
+				saved = false;
 				break;
 			case "save":
 				try {
-					super.bw = new BufferedWriter(new FileWriter(super.file, true));
-					bw.write(player.maxhealth);
+					bwr = new BufferedWriter(new FileWriter(file, false));
+					bwr.write("");
+					bwr.close();
+					bw = new BufferedWriter(new FileWriter(file, true));
+					bw.write("" + player.maxhealth);
 					bw.newLine();
-					bw.write(player.currenthealth);
+					bw.write("" + player.currenthealth);
 					bw.newLine();
-					bw.write(player.attack);
+					bw.write("" + player.attack);
 					bw.newLine();
 					bw.write("" + player.crit);
 					bw.newLine();
-					bw.write(player.defense);
+					bw.write("" + player.defense);
 					bw.close();
+					saved = true;
+					System.out.print("Game saved.\n\n");
 				} catch (IOException e) {
 					e.getMessage();
 				}
-				
 				break;
 			case "exit":
+				if (!saved) {
+					System.out.print("Are you sure you want to exit without saving? [y] [n] ");
+					check = input.next();
+					if (!check.equals("y")) {
+						System.out.print("Returning to game...\n\n");
+						break;
+					}
+				}
 				System.out.print("Exiting game.");
 				return false;
+			case "leave":
+				if (!saved) {
+					System.out.print("Are you sure you want to leave without saving? [y] [n] ");
+					check = input.next();
+					if (!check.equals("y")) {
+						System.out.print("Returning to game...\n\n");
+						break;
+					}
+				}
+				System.out.print("You left the dungeon.\n\n");
+				return true;
 			}
 			saveRoom();
 			action = takeInput();
-		} while (!action.equals("leave"));
-		System.out.print("You left the dungeon.\n\n");
-		return true;
+		} while (true);
 	}
 
 	/**
@@ -294,7 +327,7 @@ public class Dungeon extends Game{
 	 * Private method called in the {@link #newRoom()} private method, the {@link #getRoom()} private method and the {@link #enterDungeon(charac)} public method.
 	 */
 	private void refreshRoom() {
-		room = "" +
+		room = "\n" +
 				w[16] + w[16] + w[16] + w[16] + w[12] + w[4 ] + w[4 ] + w[4 ] + w[4 ] + w[4 ] + w[4 ] + w[4 ] + w[12] + w[16] + w[16] + w[16] + w[16] + "\n" +
 				w[16] + w[16] + w[16] + w[16] + w[8 ] + w[16] + w[16] + w[16] + c[0 ] + w[16] + w[16] + w[16] + w[8 ] + w[16] + w[16] + w[16] + w[16] + "\n" +
 				w[13] + w[9 ] + w[9 ] + w[9 ] + w[17] + w[0 ] + w[0 ] + w[0 ] + w[0 ] + w[0 ] + w[0 ] + w[0 ] + w[17] + w[10] + w[10] + w[10] + w[14] + "\n" +
@@ -320,7 +353,7 @@ public class Dungeon extends Game{
 	}
 
 	/**
-	 * Stores location, walls, and remaining contents of a room. Will be stored in a save file if game is saved while in a dungeon.
+	 * Stores location, walls, and remaining contents of a room into an array.
 	 * <p>
 	 * Private method called in the {@link #enterDungeon(charac)} private method.
 	 */
@@ -584,8 +617,8 @@ public class Dungeon extends Game{
 				"\"d\" - move right" + "\n" +
 				"\"inventory\" - access inventory (does nothing)" + "\n" +
 				"\"portal\" - enter portal if it is in the room (does nothing)" + "\n" +
-				"\"leave\" - leave dungeon and return to surface" + "\n" +
-				"\"save\" - saves dungeon progress (does nothing)" + "\n" +
+				"\"leave\" - leave dungeon and return to surface, DOES NOT SAVE" + "\n" +
+				"\"save\" - saves dungeon progress and player stats to file" + "\n" +
 				"\"exit\" - exits game, DOES NOT SAVE" + "\n" +
 				"\n"
 				);
