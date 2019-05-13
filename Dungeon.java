@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.Scanner;
+import java.io.*;
 
 /**
  * Deals with generation of and movement within a dungeon. Will trigger events such as battles, but that is dealt with in a different class.
@@ -8,7 +9,7 @@ import java.util.Scanner;
  * 
  * @author Gavin Jameson
  */
-public class Dungeon {
+public class Dungeon extends Game{
 
 	//constructor
 	int size;
@@ -130,6 +131,22 @@ public class Dungeon {
 				System.out.print(room);
 				break;
 			case "save":
+				try {
+					super.bw = new BufferedWriter(new FileWriter(super.file, true));
+					bw.write(player.maxhealth);
+					bw.newLine();
+					bw.write(player.currenthealth);
+					bw.newLine();
+					bw.write(player.attack);
+					bw.newLine();
+					bw.write("" + player.crit);
+					bw.newLine();
+					bw.write(player.defense);
+					bw.close();
+				} catch (IOException e) {
+					e.getMessage();
+				}
+				
 				break;
 			case "exit":
 				System.out.print("Exiting game.");

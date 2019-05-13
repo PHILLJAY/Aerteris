@@ -11,14 +11,14 @@ public class Game {
 	private Scanner in = new Scanner(System.in);
 	private String dir;
 	private File location;
-	private File file;
+	File file;
 	private BufferedReader br;
-	private BufferedWriter bw, bwr;
+	BufferedWriter bw, bwr;
 	charac player;
 
 	boolean spaceMode = false;
 	char s = ' ';
-	String name;
+	private String name;
 
 
 	public Game() {
@@ -129,7 +129,7 @@ public class Game {
 				} else {System.out.print("File not overwritten.\n");}
 			}
 		}
-		
+
 		clearConsole();
 		player = new charac(20,3,0.2,0);
 		play();
@@ -164,9 +164,22 @@ public class Game {
 					break;
 				}
 			}
-			
+
 			//load file
-			
+			try {
+				br = new BufferedReader(new FileReader(file));
+				int max = Integer.parseInt(br.readLine());
+				int cur = Integer.parseInt(br.readLine());
+				int atk = Integer.parseInt(br.readLine());
+				double crt = Double.parseDouble(br.readLine());
+				int def = Integer.parseInt(br.readLine());
+				player = new charac(max,atk,crt,def);
+				player.currenthealth = cur;
+				br.close();
+			} catch (IOException e) {
+				e.getMessage();
+			}
+
 			clearConsole();
 			play();
 
