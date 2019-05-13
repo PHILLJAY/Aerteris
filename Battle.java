@@ -1,7 +1,9 @@
+
 import java.util.*;
 
 public class Battle {
-
+	
+	public int tempdamage;
 	public static Scanner scan = new Scanner(System.in);
 	private char n;
 
@@ -17,14 +19,15 @@ public class Battle {
 					attack(x,y);
 				} else if(n=='r') { System.out.println("You ran away!\n"); break;}
 			} else {
-				System.out.println("You died... Exiting game.");
+				System.out.println("You died");
 				break;
 			}
 
 			if(isMonsterDead(y)==false) {
 				monsterattack(x,y);
 			}else {
-				System.out.println("You won!");
+				System.out.println("> you won \n> "+y.name + " dropped " +y.gold + " gold!");
+				x.gold+=y.gold;
 				break;
 			}
 		}
@@ -35,8 +38,10 @@ public class Battle {
 		if(Math.random()<=x.crit) {
 			y.currenthealth=y.currenthealth+y.defense-x.attack*2;
 			System.out.println("> You CRIT "+ (x.attack*2-y.defense)+" damage to "+y.name+"!");
+			x.tempdamage=x.attack*2;
 		}else {	y.currenthealth=y.currenthealth+y.defense-x.attack;
 		System.out.println("> You deal "+ (x.attack-y.defense)+" damage to "+y.name);
+		x.tempdamage=x.attack;
 		}
 
 	}
@@ -62,6 +67,7 @@ public class Battle {
 		}
 	}
 
+	
 	public static void BasicMonsterAttack(charac p, Monster m) {
 		if(m.name.equals("fibonacci")) {
 			Monster.SpecialAttack(p, m, m.name);
@@ -109,4 +115,3 @@ public class Battle {
 
 
 }
-
