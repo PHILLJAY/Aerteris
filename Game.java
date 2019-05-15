@@ -90,7 +90,7 @@ public class Game {
 			} else if (startAction.equals("blank")) {
 				clearConsole();
 				player = new charac(20,3,0.2,0,0);
-				play();
+				play("new");
 				flag = true;
 			} else if (startAction.equals("space")) {
 				spaceMode = true; 
@@ -135,21 +135,22 @@ public class Game {
 
 		clearConsole();
 		player = new charac(20,3,0.2,0,0);
-		play();
+		play("new");
 
 	}
 
 	private void loadSave() throws IOException {
 
-		while (true) {
+		File[] f = location.listFiles();
+		if (f.length == 0) {
 			clearConsole();
-
-			File[] f = location.listFiles();
-			if (f.length == 0) {
-				System.out.print("No save files have been found - switching to file creation.\nHit \"enter\" to continue. ");
-				in.nextLine();
-				newSave();
-			} else {
+			System.out.print("No save files have been found - switching to file creation.\nHit \"enter\" to continue. ");
+			in.nextLine();
+			newSave();
+		} else {
+			while (true) {
+				clearConsole();
+				f = location.listFiles();
 				System.out.print("Existing save files:\n");
 				for (int i = 0; i < f.length; i++) {
 					System.out.print(f[i].getName().substring(0,f[i].getName().length() - 4) + "\n");
@@ -194,16 +195,15 @@ public class Game {
 					e.getMessage();
 				}
 			}
+			clearConsole();
+			play("load");
 		}
-
-		clearConsole();
-		play();
 
 	}
 
-	private void play() {
+	private void play(String init) {
 
-		Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, file);
+		Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, file, init);
 
 		d.enterDungeon(player);
 

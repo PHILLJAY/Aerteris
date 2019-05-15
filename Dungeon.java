@@ -28,15 +28,17 @@ public class Dungeon {
 	private int[] moveType = new int[4]; //values: 0=no, 1=travel, 2=move and remain
 	private Scanner input = new Scanner(System.in);
 	private int loc;
+	String action;
 
 	//symbols
 	private char playerSym = '@';
 	private char lootSym = 'C';
 	private char enemySym = 'E';
 	private char healSym = 'H';
-	
+
 	//saving
 	File file;
+	BufferedReader br;
 	BufferedWriter bw, bwr;
 	private boolean saved = true;
 	private String check;
@@ -73,10 +75,13 @@ public class Dungeon {
 	 * @param wallChanceReduction - What percent is subtracted from {@code wallChance} on each sequential generation in a room.
 	 * @param lootChance - The chance that a pocket will have a loot. Less far walls will decrease the number of chests.
 	 * @param enemyChance - The chance that an enemy will spawn in a hallway. Less walls will increase number of enemies.
+	 * @param file - Active save file for game.
+	 * @param action - {@code String} detailing what to do when initially entering.
 	 * 
 	 * @see {@link #enterDungeon(charac)}
 	 */
-	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, double lootChance, double enemyChance, File file) {
+	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, 
+			double lootChance, double enemyChance, File file, String action) {
 		w[16] = ' ';
 		w[17] = '+';
 		this.size = size;
@@ -85,6 +90,7 @@ public class Dungeon {
 		this.wallChanceReduction = wallChanceReduction;
 		this.lootChance = lootChance;
 		this.enemyChance = enemyChance;
+		this.action = action;
 		//to save
 		this.file = file;
 		visitedRooms = new String[size][size][4];
@@ -102,9 +108,43 @@ public class Dungeon {
 	 * @see {@link #getRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
 	public boolean enterDungeon(charac player) {
-		String action = "new";
 		do {
 			switch (action) {
+			case "load":
+				try {
+					br = new BufferedReader(new FileReader(file));
+					while (!br.readLine().equals("dungeon")) {}
+					size = Integer.parseInt(br.readLine().substring(4));
+					wallChance = Double.parseDouble(br.readLine().substring(4));
+					farWallChance = Double.parseDouble(br.readLine().substring(4));
+					wallChanceReduction = Double.parseDouble(br.readLine().substring(4));
+					lootChance = Double.parseDouble(br.readLine().substring(4));
+					enemyChance = Double.parseDouble(br.readLine().substring(4));
+					visitedRooms = new String[size][size][4];
+					insideRoom = new int[]{size/2, size/2};
+					String[] tempA = br.readLine().split(",");
+					insideRoom[0] = Integer.parseInt(tempA[0]);
+					insideRoom[1] = Integer.parseInt(tempA[1]);
+					for (int i = 0; i < size; i++) {
+						for (int j = 0; j < size; j++ ) {
+							String temp = br.readLine();
+							if (temp.equals(":::")) {
+								for (int k = 0; k < 4; k++) {
+									visitedRooms[i][j][k] = null;
+								}
+							} else {
+								visitedRooms[i][j][0] = temp.substring(0,w.length); // length could be changed on w and or c
+								visitedRooms[i][j][1] = temp.substring(w.length+1,w.length+c.length+1);
+								visitedRooms[i][j][2] = temp.substring(w.length+c.length+2,w.length+c.length+6);
+								visitedRooms[i][j][3] = temp.substring(w.length+c.length+7);
+							}
+						}
+					}
+					c[Integer.parseInt(visitedRooms[insideRoom[0]][insideRoom[1]][3])] = playerSym;
+					br.close();
+				} catch (IOException e) {
+					e.getMessage();
+				}
 			case "new":
 				getRoom();
 				System.out.print(room);
@@ -145,6 +185,7 @@ public class Dungeon {
 				break;
 			case "save":
 				try {
+					saveRoom();
 					bwr = new BufferedWriter(new FileWriter(file, false));
 					bwr.write("");
 					bwr.close();
@@ -160,6 +201,33 @@ public class Dungeon {
 					bw.write("def:" + player.defense);
 					bw.newLine();
 					bw.write("gol:" + player.gold);
+					bw.newLine();
+					bw.write("dungeon");
+					bw.newLine();
+					bw.write("siz:" + size);
+					bw.newLine();
+					bw.write("wc :" + wallChance);
+					bw.newLine();
+					bw.write("fwc:" + farWallChance);
+					bw.newLine();
+					bw.write("wcr:" + wallChanceReduction);
+					bw.newLine();
+					bw.write("lc :" + lootChance);
+					bw.newLine();
+					bw.write("ec :" + enemyChance);
+					bw.newLine();
+					bw.write(insideRoom[0] + "," + insideRoom[1]);
+					for (int i = 0; i < size; i++) {
+						for (int j = 0; j < size; j++) {
+							bw.newLine();
+							if (visitedRooms[i][j][0] == null) {
+								bw.write(":::");
+							} else {
+								bw.write(visitedRooms[i][j][0] + ":" + visitedRooms[i][j][1] + ":" + 
+										visitedRooms[i][j][2] + ":" + visitedRooms[i][j][3]);
+							}
+						}
+					}
 					bw.close();
 					saved = true;
 					System.out.print("Game saved.\n\n");
