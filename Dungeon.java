@@ -120,7 +120,8 @@ public class Dungeon {
 						(int)(5+Math.random()*11), 
 						(int)(1+Math.random()*3), 
 						(Math.random()), 
-						(int)(Math.random()*2)
+						(int)(Math.random()*2),
+						(int)(Math.random()*10)
 						);
 				Battle b = new Battle(player, monster);
 				if (player.currenthealth <= 0) return false;
@@ -148,15 +149,17 @@ public class Dungeon {
 					bwr.write("");
 					bwr.close();
 					bw = new BufferedWriter(new FileWriter(file, true));
-					bw.write("" + player.maxhealth);
+					bw.write("max:" + player.maxhealth);
 					bw.newLine();
-					bw.write("" + player.currenthealth);
+					bw.write("cur:" + player.currenthealth);
 					bw.newLine();
-					bw.write("" + player.attack);
+					bw.write("atk:" + player.attack);
 					bw.newLine();
-					bw.write("" + player.crit);
+					bw.write("crt:" + player.crit);
 					bw.newLine();
-					bw.write("" + player.defense);
+					bw.write("def:" + player.defense);
+					bw.newLine();
+					bw.write("gol:" + player.gold);
 					bw.close();
 					saved = true;
 					System.out.print("Game saved.\n\n");
