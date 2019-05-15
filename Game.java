@@ -89,7 +89,7 @@ public class Game {
 				flag = true;
 			} else if (startAction.equals("blank")) {
 				clearConsole();
-				player = new charac(20,3,0.2,0);
+				player = new charac(20,3,0.2,0,0);
 				play();
 				flag = true;
 			} else if (startAction.equals("space")) {
@@ -115,6 +115,9 @@ public class Game {
 			file = new File(dir + "\\" + name + ".txt");
 			if (name.length() < 1) {System.out.print("Name is too short!\n");}
 			else if (file.createNewFile()) {
+				bwr = new BufferedWriter(new FileWriter(file, false));
+				bwr.write("no data");
+				bwr.close();
 				System.out.print("File created. Hit \"enter\" to continue. ");
 				in.nextLine();
 				break;
@@ -131,59 +134,71 @@ public class Game {
 		}
 
 		clearConsole();
-		player = new charac(20,3,0.2,0);
+		player = new charac(20,3,0.2,0,0);
 		play();
 
 	}
 
 	private void loadSave() throws IOException {
 
-		clearConsole();
+		while (true) {
+			clearConsole();
 
-		File[] f = location.listFiles();
-		if (f.length == 0) {
-			System.out.print("No save files have been found - switching to file creation.\nHit \"enter\" to continue. ");
-			in.nextLine();
-			newSave();
-		} else {
-			System.out.print("Existing save files:\n");
-			for (int i = 0; i < f.length; i++) {
-				System.out.print(f[i].getName().substring(0,f[i].getName().length() - 4) + "\n");
-			}
-			System.out.print("\n");
+			File[] f = location.listFiles();
+			if (f.length == 0) {
+				System.out.print("No save files have been found - switching to file creation.\nHit \"enter\" to continue. ");
+				in.nextLine();
+				newSave();
+			} else {
+				System.out.print("Existing save files:\n");
+				for (int i = 0; i < f.length; i++) {
+					System.out.print(f[i].getName().substring(0,f[i].getName().length() - 4) + "\n");
+				}
+				System.out.print("\n");
 
-			while (true) {
-				System.out.print("Enter file name: ");
-				name = in.nextLine();
-				file = new File(dir + "\\" + name + ".txt");
-				if (!file.exists()) {
-					System.out.print("File does not exist.\n");
-				} else {
-					System.out.print("File selected. Hit \"enter\" to continue. ");
-					in.nextLine();
-					break;
+				while (true) {
+					System.out.print("Enter file name: ");
+					name = in.nextLine();
+					file = new File(dir + "\\" + name + ".txt");
+					if (!file.exists()) {
+						System.out.print("File does not exist.\n");
+					} else {
+						System.out.print("File selected. Hit \"enter\" to continue. ");
+						in.nextLine();
+						break;
+					}
+				}
+
+				//load file
+				try {
+					br = new BufferedReader(new FileReader(file));
+					String temp = br.readLine();
+					if (temp.equals("no data")) {
+						br.close();
+						file.delete();
+						System.out.print("File contains no save data! Hit \"enter\" to continue. ");
+						in.nextLine();
+					} else {
+						int max = Integer.parseInt(temp.substring(4));
+						int cur = Integer.parseInt(br.readLine().substring(4));
+						int atk = Integer.parseInt(br.readLine().substring(4));
+						double crt = Double.parseDouble(br.readLine().substring(4));
+						int def = Integer.parseInt(br.readLine().substring(4));
+						int gol = Integer.parseInt(br.readLine().substring(4));
+						player = new charac(max,atk,crt,def,gol);
+						player.currenthealth = cur;
+						br.close();
+						break;
+					}
+				} catch (IOException e) {
+					e.getMessage();
 				}
 			}
-
-			//load file
-			try {
-				br = new BufferedReader(new FileReader(file));
-				int max = Integer.parseInt(br.readLine());
-				int cur = Integer.parseInt(br.readLine());
-				int atk = Integer.parseInt(br.readLine());
-				double crt = Double.parseDouble(br.readLine());
-				int def = Integer.parseInt(br.readLine());
-				player = new charac(max,atk,crt,def);
-				player.currenthealth = cur;
-				br.close();
-			} catch (IOException e) {
-				e.getMessage();
-			}
-
-			clearConsole();
-			play();
-
 		}
+
+		clearConsole();
+		play();
+
 	}
 
 	private void play() {
