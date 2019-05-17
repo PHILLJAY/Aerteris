@@ -6,10 +6,11 @@ public class Item {
 	public int mana;
 	public boolean equiped;
 	public int type;
+	public int value;
 	/*Item types;
 	 * 0 = sword
 	 * 1 = shield
-	 * 2 = armour
+	 * 2 = can
 	 * 3 = potion
 	 * 
 	 */
@@ -32,7 +33,7 @@ public class Item {
 		case 1:
 			return"Shied";
 		case 2:
-			return"Armour Pot";
+			return"can";
 		case 3:
 			return"Potision";
 		}
@@ -59,8 +60,11 @@ public class Item {
 	public void setMana(int z) {
 		mana = z;
 	}
-	public void setType(int y) {
-		type = y;
+	public void setType(int z) {
+		type = z;
+	}
+	public void genValue() {
+		value = (int) ((health+mana+defense+attack+(crit*50)/2)); 
 	}
 
 	//get stuff below
@@ -80,7 +84,26 @@ public class Item {
 	public int getMana() {
 		return mana;
 	}
+	public int getType() {
+		return type;
+	}
 
+	
+	//randomize based on what type of item it is
+	public void  genStat(int z) {
+		if(type==0) {
+			setCrit((z+Math.random()*10)/100);
+			setAttack((int)Math.round(z+Math.random()*((z/4)-(-z/4)+(z/4))));
+		}else if(type==1) {
+			setDefense((int)Math.round(z/2+Math.random()*((z/4)-(-z/4)+(z/4))));
+			setHealth((int)Math.round(z+Math.random()*((z/4)-(-z/4)+(z/4))));
+		}else if(type==2) {
+			setAttack((int)Math.round(1+z/5));
+			setCrit((z+Math.random()*5)/100);
+		}else if(type==3) {
+			setHealth(z*4);
+		}
+	}
 
 
 
