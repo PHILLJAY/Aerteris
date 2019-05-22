@@ -141,16 +141,16 @@ public class Game {
 
 	private void loadSave() throws IOException {
 
-		File[] f = location.listFiles();
-		if (f.length == 0) {
-			clearConsole();
-			System.out.print("No save files have been found - switching to file creation.\nHit \"enter\" to continue. ");
-			in.nextLine();
-			newSave();
-		} else {
-			while (true) {
+		clearConsole();
+		while (true) {
+			File[] f = location.listFiles();
+			if (f.length == 0) {
 				clearConsole();
-				f = location.listFiles();
+				System.out.print("No save files have been found - switching to file creation.\nHit \"enter\" to continue. ");
+				in.nextLine();
+				newSave();
+				break;
+			} else {
 				System.out.print("Existing save files:\n");
 				for (int i = 0; i < f.length; i++) {
 					System.out.print(f[i].getName().substring(0,f[i].getName().length() - 4) + "\n");
@@ -189,14 +189,14 @@ public class Game {
 						player = new charac(max,atk,crt,def,gol);
 						player.currenthealth = cur;
 						br.close();
+						clearConsole();
+						play("load");
 						break;
 					}
 				} catch (IOException e) {
 					e.getMessage();
 				}
 			}
-			clearConsole();
-			play("load");
 		}
 
 	}
