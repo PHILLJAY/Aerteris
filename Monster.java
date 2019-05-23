@@ -4,24 +4,25 @@ public class Monster extends charac {
 	
 	public String name;
 	public String[] moves = new String[4];
-	public int heal;
 	public int specialmove;
 	public static int fibonacci=0;
 	public static int charge=1;
-	
-	
+		
 	String[] n = new String[]{
 	"skele",
 	"Cave Bat",
 	"Vampire",
 	"Suicide Bomber",
 	"Blood Priest",
-	"fibonacci",
 	"Mad Scientist",
 	"Copy Cat",
-	"Gran Torino",
 	"Executioner"
 	};
+	
+	String[] b = new String[] { "Joker", "fibonacci", "Gran torino"};
+	
+	
+	;
 	
 	public Monster(int maxhealth, int attack, double crit,int defense,int gold) {
 		super(maxhealth,attack,crit,defense,gold);
@@ -35,6 +36,24 @@ public class Monster extends charac {
 		this.name=n;
 		// TODO Auto-generated constructor stub
 	}
+	
+	public Monster(int maxhealth, int attack, double crit,int defense,int gold,char type) {
+		super(maxhealth,attack,crit,defense,gold);
+		switch(type) {
+		case 'e':
+			this.name=n[(int)(Math.floor(Math.random()*n.length))];
+			break;
+		case 'E':
+			this.name=b[(int)(Math.floor(Math.random()*b.length))];
+			break;
+		case 'B':
+			this.name="Joker";
+		
+		}
+		// TODO Auto-generated constructor stub
+	}
+	
+	
 	
 	public static void SpecialAttack( charac p,Monster m,String name) {
 		switch(name) {
@@ -78,8 +97,14 @@ public class Monster extends charac {
 		Battle.BasicMonsterAttack(p, m);
 		Battle.BasicMonsterAttack(p, m);
 		break;
+	case "Joker":
+		if(p.defense>m.attack*2) System.out.println("You did no damage lol");
+		else System.out.println("> "+m.name+ " BACKSTABS you for "+ (m.attack*2-p.defense));
+		p.currenthealth-=m.attack*2+p.defense;
 		}
 	}
+	
+
 	
 
 	public static int fibonacciy(int x) {
