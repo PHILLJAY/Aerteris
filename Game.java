@@ -126,6 +126,9 @@ public class Game {
 				if (in.nextLine().equals("y")) {
 					file.delete();
 					file.createNewFile();
+					bwr = new BufferedWriter(new FileWriter(file, false));
+					bwr.write("no data");
+					bwr.close();
 					System.out.print("File overwritten. Hit \"enter\" to continue. ");
 					in.nextLine();
 					break;
@@ -151,7 +154,7 @@ public class Game {
 				newSave();
 				break;
 			} else {
-				System.out.print("Existing save files:\n");
+				System.out.print("\nExisting save files:\n");
 				for (int i = 0; i < f.length; i++) {
 					System.out.print(f[i].getName().substring(0,f[i].getName().length() - 4) + "\n");
 				}
