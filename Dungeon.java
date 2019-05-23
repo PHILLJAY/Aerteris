@@ -742,7 +742,7 @@ public class Dungeon {
 	/**
 	 * Lists all valid inputs for {@link #takeInput()}.
 	 * <p>
-	 * Private method called in the {@link #takeInput()} private method.
+	 * Private method called in the {@link #takeInput()} private method. 
 	 */
 	private void listInputs() {
 		System.out.print("" +
