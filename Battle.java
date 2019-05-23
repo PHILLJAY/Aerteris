@@ -2,7 +2,7 @@
 import java.util.*;
 
 public class Battle {
-	
+
 	public int tempdamage;
 	public static Scanner scan = new Scanner(System.in);
 	private char n;
@@ -10,19 +10,30 @@ public class Battle {
 	public Battle(charac x,Monster y ) {
 		System.out.println("\n-------------------------------");
 		System.out.println("# "+y.name+" Appears! # \n");
-
+		int lostg = y.gold;
 		while(true) {
 			if(isDead(x)==false) {
 				System.out.println("Your HP: "+x.currenthealth);
-				System.out.println(y.name+ "'s HP: "+y.currenthealth +"\n");
+				if(!y.name.equals("Joker")) System.out.println(y.name+ "'s HP: "+y.currenthealth +"\n");
+				else System.out.println(y.name+ "'s HP: ?? \n");
 				if((n=move())=='a') {
 					attack(x,y);
-				} else if(n=='r') { System.out.println("You ran away!\n"); break;}
+				} else if(n=='b') { 
+					if(Bribe(x,y)) {
+						System.out.println("> You threw " +lostg+" on the ground and ran away");
+						x.gold-=lostg;
+						y.gold+=lostg;
+						System.out.println("> You have " +x.gold+" gold left");
+						break;
+					}else {
+						System.out.println("I'll take that thanks");
+						x.gold-=lostg;
+					}
+				}
 			} else {
 				System.out.println("You died");
 				break;
 			}
-
 			if(isMonsterDead(y)==false) {
 				monsterattack(x,y);
 			}else {
@@ -33,6 +44,10 @@ public class Battle {
 		}
 	}
 
+	public static boolean Bribe(charac p,Monster m) {
+		if(p.gold>=m.gold)return true;
+		return false;
+	}
 
 	public static void attack(charac x, Monster y){	
 		if(Math.random()<=x.crit) {
@@ -46,9 +61,9 @@ public class Battle {
 
 	}
 
+
 	public static void monsterattack(charac p, Monster m){
 		double r = Math.random();
-
 		if(r<0.65) {
 			BasicMonsterAttack(p,m);
 		} else {
@@ -67,7 +82,7 @@ public class Battle {
 		}
 	}
 
-	
+
 	public static void BasicMonsterAttack(charac p, Monster m) {
 		if(m.name.equals("fibonacci")) {
 			Monster.SpecialAttack(p, m, m.name);
@@ -76,7 +91,7 @@ public class Battle {
 			p.currenthealth+=p.defense-(m.attack*m.charge);
 			m.charge=1;
 		}
-			else{
+		else{
 			if(Math.random()<=m.crit) {
 				p.currenthealth+=p.defense-m.attack*2;
 				System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
@@ -88,9 +103,9 @@ public class Battle {
 
 	public char move() {
 		while(true) {
-			System.out.print("Whatchu wanna do: \nAttack \nRun \nItem \n");
+			System.out.print("Whatchu wanna do: \nAttack \nBribe \nItem \n");
 			char c = scan.next().toLowerCase().charAt(0);
-			if(c=='a'||c=='i'||c=='r') {
+			if(c=='a'||c=='i'||c=='b') {
 				return c;	
 			}
 			else {
