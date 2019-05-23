@@ -8,7 +8,7 @@ public class Monster extends charac {
 	public static int fibonacci=0;
 	public static int charge=1;
 		
-	String[] n = new String[]{
+	static String[] n = new String[]{
 	"skele",
 	"Cave Bat",
 	"Vampire",
@@ -19,10 +19,13 @@ public class Monster extends charac {
 	"Executioner"
 	};
 	
-	String[] b = new String[] { "Joker", "fibonacci", "Gran Torino"};
+	String[] b = new String[] { 
+			"Joker", 
+			"fibonacci", 
+			"Gran torino",
+			"Master of Coins"
+			};
 	
-	
-	;
 	
 	public Monster(int maxhealth, int attack, double crit,int defense,int gold) {
 		super(maxhealth,attack,crit,defense,gold);
@@ -47,15 +50,14 @@ public class Monster extends charac {
 			this.name=b[(int)(Math.floor(Math.random()*b.length))];
 			break;
 		case 'B':
-			this.name="Joker";
-		
+			this.name="Dungeon Boss";
 		}
 		// TODO Auto-generated constructor stub
 	}
 	
 	
 	
-	public static void SpecialAttack( charac p,Monster m,String name) {
+	public static void SpecialAttack(charac p,Monster m,String name) {
 		switch(name) {
 	case "skele":
 		System.out.println("> "+m.name +" uses BONE CLAW and deals " + (m.attack+2-p.defense) +" damage! \n");
@@ -81,7 +83,7 @@ public class Monster extends charac {
 		p.currenthealth+=p.defense-fibonacciy(fibonacci+1);
 		break;
 	case "Mad Scientist":
-		System.out.println("> " + m.name+ "is mixing chemicals.... \n");
+		System.out.println("> " + m.name+ " is mixing chemicals.... \n");
 		m.charge+=1;
 		break;
 	case "Copy Cat":
@@ -98,9 +100,29 @@ public class Monster extends charac {
 		Battle.BasicMonsterAttack(p, m);
 		break;
 	case "Joker":
-		if(p.defense>m.attack*2) System.out.println("You did no damage lol");
+		if(p.defense>m.attack*2) System.out.println(m.name+" did no damage lol");
 		else System.out.println("> "+m.name+ " BACKSTABS you for "+ (m.attack*2-p.defense));
 		p.currenthealth-=m.attack*2+p.defense;
+		break;
+	case "Master of Coins":
+		int stealgold=m.attack*2+m.gold/4;
+		if(stealgold<m.gold) {
+			System.out.println("> Master of Coins steals "+stealgold+" gold from you");
+			p.gold-=stealgold;
+			m.gold+=stealgold;
+		}else if(p.gold>0) {
+			System.out.println("> Master of Coins steals "+stealgold+" gold from you");
+			m.gold+=p.gold;
+			p.gold=0;
+		} else {
+			if(p.defense>m.attack*3) System.out.println("> did no dmg");
+			else System.out.println("> Master of Coins THROWS HIS MONEY BAG on you and deals " +m.attack*3+ " damage");
+			p.currenthealth-=m.attack*3+p.defense;
+		}
+		break;
+	case "Dungeon Boss":
+		SpecialAttack(p,m,n[(int)(Math.floor(Math.random()*n.length))]);
+		break;
 		}
 	}
 	
