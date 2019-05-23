@@ -170,7 +170,8 @@ public class Dungeon {
 						(int)(player.attack/2+Math.random()*player.attack/2), 
 						(Math.random()/4), 
 						(int)(Math.random()*2),
-						(int)(1+Math.random()*10)
+						(int)(1+Math.random()*10),
+						'e'
 						);
 				Battle normal = new Battle(player, monster);
 				if (player.currenthealth <= 0) return false;
@@ -184,7 +185,8 @@ public class Dungeon {
 						(int)(player.attack/2+Math.random()*player.attack/2), 
 						(Math.random()/4), 
 						(int)(Math.random()*2),
-						(int)(1+Math.random()*10)
+						(int)(1+Math.random()*10),
+						'E'
 						);
 				Battle tough = new Battle(player, miniBoss);
 				if (player.currenthealth <= 0) return false;
@@ -691,7 +693,7 @@ public class Dungeon {
 			System.out.print("You can't go there!\n");
 			return 0;
 		case 1:
-			if (c[a] != enemySym) {
+			if (c[a] != enemySym && c[a] != miniSym) {
 				resetContents(0);
 				c[b] = playerSym;
 				refreshCoords(direction);
