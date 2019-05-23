@@ -13,6 +13,7 @@ public class Dungeon {
 
 	//constructor
 	int size;
+	private charac player;
 	private String[][][] visitedRooms;
 	private int[] insideRoom;
 	private double wallChance;
@@ -20,6 +21,7 @@ public class Dungeon {
 	private double wallChanceReduction;
 	private double lootChance;
 	private double enemyChance;
+	private double minibossChance;
 
 	//room prep
 	private char[] c = new char[4];
@@ -33,7 +35,8 @@ public class Dungeon {
 	//symbols
 	private char playerSym = '@';
 	private char lootSym = 'C';
-	private char enemySym = 'E';
+	private char enemySym = 'e';
+	private char miniSym = 'E';
 	private char healSym = 'H';
 
 	//saving
@@ -75,13 +78,14 @@ public class Dungeon {
 	 * @param wallChanceReduction - What percent is subtracted from {@code wallChance} on each sequential generation in a room.
 	 * @param lootChance - The chance that a pocket will have a loot. Less far walls will decrease the number of chests.
 	 * @param enemyChance - The chance that an enemy will spawn in a hallway. Less walls will increase number of enemies.
+	 * @param minibossChance - The chance that a tough enemy will spawn in a hallway. Less walls will increase number of enemies.
 	 * @param file - Active save file for game.
 	 * @param action - {@code String} detailing what to do when initially entering.
 	 * 
 	 * @see {@link #enterDungeon(charac)}
 	 */
 	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, 
-			double lootChance, double enemyChance, File file, String action) {
+			double lootChance, double enemyChance, double minibossChance, File file, String action) {
 		w[16] = ' ';
 		w[17] = '+';
 		this.size = size;
@@ -90,6 +94,7 @@ public class Dungeon {
 		this.wallChanceReduction = wallChanceReduction;
 		this.lootChance = lootChance;
 		this.enemyChance = enemyChance;
+		this.minibossChance = minibossChance;
 		this.action = action;
 		//to save
 		this.file = file;
@@ -103,11 +108,14 @@ public class Dungeon {
 	/**
 	 * Starts the progression through the dungeon.
 	 * 
+	 * @param p - Player's character to be entering the dungeon
+	 * 
 	 * @return {@code true} if alive at the end, {@code false} if the player has died.
 	 * 
 	 * @see {@link #getRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public boolean enterDungeon(charac player) {
+	public boolean enterDungeon(charac p) {
+		player = p;
 		do {
 			switch (action) {
 			case "load":
@@ -120,6 +128,7 @@ public class Dungeon {
 					wallChanceReduction = Double.parseDouble(br.readLine().substring(4));
 					lootChance = Double.parseDouble(br.readLine().substring(4));
 					enemyChance = Double.parseDouble(br.readLine().substring(4));
+					minibossChance = Double.parseDouble(br.readLine().substring(4));
 					visitedRooms = new String[size][size][4];
 					insideRoom = new int[]{size/2, size/2};
 					String[] tempA = br.readLine().split(",");
@@ -155,15 +164,29 @@ public class Dungeon {
 				System.out.print(room);
 				saved = false;
 				break;
-			case "battle": 
+			case "battleN": 
 				Monster monster = new Monster(
-						(int)(5+Math.random()*11), 
-						(int)(1+Math.random()*3), 
-						(Math.random()), 
+						(int)(player.maxhealth/2+Math.random()*player.maxhealth/2), 
+						(int)(player.attack/2+Math.random()*player.attack/2), 
+						(Math.random()/4), 
 						(int)(Math.random()*2),
-						(int)(Math.random()*10)
+						(int)(1+Math.random()*10)
 						);
-				Battle b = new Battle(player, monster);
+				Battle normal = new Battle(player, monster);
+				if (player.currenthealth <= 0) return false;
+				refreshRoom();
+				System.out.print(room);
+				saved = false;
+				break;
+			case "battleM": 
+				Monster miniBoss = new Monster(
+						(int)(player.maxhealth/2+Math.random()*player.maxhealth/2), 
+						(int)(player.attack/2+Math.random()*player.attack/2), 
+						(Math.random()/4), 
+						(int)(Math.random()*2),
+						(int)(1+Math.random()*10)
+						);
+				Battle tough = new Battle(player, miniBoss);
 				if (player.currenthealth <= 0) return false;
 				refreshRoom();
 				System.out.print(room);
@@ -215,6 +238,8 @@ public class Dungeon {
 					bw.write("lc :" + lootChance);
 					bw.newLine();
 					bw.write("ec :" + enemyChance);
+					bw.newLine();
+					bw.write("mbc:" + minibossChance);
 					bw.newLine();
 					bw.write(insideRoom[0] + "," + insideRoom[1]);
 					for (int i = 0; i < size; i++) {
@@ -386,7 +411,8 @@ public class Dungeon {
 						c[i] = syms[(int)(Math.random()*(syms.length))];
 					}
 				} else if (moveType[i] == 1) {
-					if (Math.random() < enemyChance) c[i] = enemySym;
+					if (Math.random() < minibossChance) c[i] = miniSym;
+					else if (Math.random() < enemyChance) c[i] = enemySym;
 				}
 			}
 		}
@@ -486,6 +512,32 @@ public class Dungeon {
 	}
 
 	/**
+	 * Counts number of times a specified {@code char} shows up 
+	 * in the contents of all rooms generated so far.
+	 * <p>
+	 * Private method called in the {@link #takeInput()} private method.
+	 * 
+	 * @param search - {@code char} to count instances of.
+	 * 
+	 * @return Number of appearances of {@code search}.
+	 */
+	private int countContents(char search) {
+		int count = 0;
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				for (int k = 0; k < 4; k++) {
+					if (visitedRooms[i][j][1] != null) if (visitedRooms[i][j][1].charAt(k) == search) count++;
+				}
+			}
+		}
+		return count;
+	}
+	
+	private boolean checkComplete() {
+		return true;
+	}
+
+	/**
 	 * Finds the location of the player in a room.
 	 * <p>
 	 * Private method called in the {@link #generateRoom()} private method, the {@link #saveRoom()} private method, 
@@ -570,16 +622,28 @@ public class Dungeon {
 					switch (r) {
 					case 1: return "new";
 					case 2: return "stay";
-					case 3: return "battle";
+					case 3: return "battleN";
 					case 4: return "loot";
 					case 5: return "heal";
+					case 6: return "battleM";
 					}
 				} else {
 					break;
 				}
 			case "inventory":
-				System.out.print("[this is your inventory]\n");
+				System.out.print("Current health: " + player.currenthealth + "\n");
+				System.out.print("Gold: " + player.gold + "\n\n");
 				//manageInventory?
+				break;
+			case "details":
+				System.out.print("Dungeon status: ");
+				if (checkComplete()) {
+					if (countContents('e') == 0 && countContents('E') == 0) {
+						System.out.print("Conquered\n");
+					} else System.out.print("Explored\n");
+				} else System.out.print("Incomplete\n");
+				System.out.print("Discovered monsters remaining: " + countContents('e') + "\n");
+				System.out.print("Discovered tough monsters remaining: " + countContents('E') + "\n\n");
 				break;
 			case "leave": return "leave";
 			case "save": return "save";
@@ -637,6 +701,7 @@ public class Dungeon {
 			else if (c[a] == enemySym) ret = 3;
 			else if (c[a] == lootSym) ret = 4;
 			else if (c[a] == healSym) ret = 5;
+			else if (c[a] == miniSym) ret = 6;
 			c[findPlayer(0)] = ' ';
 			c[a] = playerSym;
 			return ret;
@@ -686,8 +751,9 @@ public class Dungeon {
 				"\"a\" - move left" + "\n" +
 				"\"s\" - move down" + "\n" +
 				"\"d\" - move right" + "\n" +
-				"\"inventory\" - access inventory (does nothing)" + "\n" +
 				"\"portal\" - enter portal if it is in the room (does nothing)" + "\n" +
+				"\"inventory\" - access inventory" + "\n" +
+				"\"details\" - lists information about dungeon progression" + "\n" +
 				"\"leave\" - leave dungeon and return to surface, DOES NOT SAVE" + "\n" +
 				"\"save\" - saves dungeon progress and player stats to file" + "\n" +
 				"\"exit\" - exits game, DOES NOT SAVE" + "\n" +
