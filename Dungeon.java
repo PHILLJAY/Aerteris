@@ -747,7 +747,7 @@ public class Dungeon {
 	 * Private method called in the {@link #takeInput()} private method. 
 	 */
 	private void listInputs() {
-		System.out.print("" +
+		System.out.print("" + 
 				"\"list\" - list all acceptable inputs" + "\n" +
 				"\"w\" - move up" + "\n" +
 				"\"a\" - move left" + "\n" +
