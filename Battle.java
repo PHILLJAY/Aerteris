@@ -26,7 +26,7 @@ public class Battle {
 						System.out.println("> You have " +x.gold+" gold left");
 						break;
 					}else {
-						System.out.println("I'll take that thanks");
+						System.out.println("> I'll take that thanks");
 						x.gold-=lostg;
 					}
 				}
