@@ -195,8 +195,9 @@ public class Dungeon {
 				saved = false;
 				break;
 			case "loot":
-				//loot class? in dungeon or elsewhere?
-				System.out.print("[LOOTING...]\n\n");
+				int temp = (int)(1+Math.random()*10);
+				p.gold += temp;
+				System.out.print("You got " + temp + " gold from the chest.\n\n");
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
