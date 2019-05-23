@@ -213,6 +213,8 @@ public class Dungeon {
 					bwr.write("");
 					bwr.close();
 					bw = new BufferedWriter(new FileWriter(file, true));
+					bw.write("player");
+					bw.newLine();
 					bw.write("max:" + player.maxhealth);
 					bw.newLine();
 					bw.write("cur:" + player.currenthealth);

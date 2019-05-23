@@ -170,7 +170,7 @@ public class Game {
 					}
 				}
 
-				//load file
+				//load file 
 				try {
 					br = new BufferedReader(new FileReader(file));
 					String temp = br.readLine();
@@ -180,7 +180,7 @@ public class Game {
 						System.out.print("File contains no save data! Hit \"enter\" to continue. ");
 						in.nextLine();
 					} else {
-						int max = Integer.parseInt(temp.substring(4));
+						int max = Integer.parseInt(br.readLine().substring(4));
 						int cur = Integer.parseInt(br.readLine().substring(4));
 						int atk = Integer.parseInt(br.readLine().substring(4));
 						double crt = Double.parseDouble(br.readLine().substring(4));
