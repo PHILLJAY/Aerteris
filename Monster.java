@@ -19,7 +19,7 @@ public class Monster extends charac {
 	"Executioner"
 	};
 	
-	String[] b = new String[] { "Joker", "fibonacci", "Gran torino"};
+	String[] b = new String[] { "Joker", "fibonacci", "Gran Torino"};
 	
 	
 	;

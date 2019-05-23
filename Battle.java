@@ -20,7 +20,7 @@ public class Battle {
 					attack(x,y);
 				} else if(n=='b') { 
 					if(Bribe(x,y)) {
-						System.out.println("> You threw " +lostg+" on the ground and ran away");
+						System.out.println("> You threw " +lostg+" gold on the ground and ran away");
 						x.gold-=lostg;
 						y.gold+=lostg;
 						System.out.println("> You have " +x.gold+" gold left");
