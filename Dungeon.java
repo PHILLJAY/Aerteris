@@ -31,6 +31,7 @@ public class Dungeon {
 	private Scanner input = new Scanner(System.in);
 	private int loc;
 	String action;
+	boolean rewarded;
 
 	//symbols
 	private char playerSym = '@';
@@ -100,9 +101,10 @@ public class Dungeon {
 		this.file = file;
 		visitedRooms = new String[size][size][4];
 		insideRoom = new int[]{size/2, size/2};
+		rewarded = false;
 
 		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
-		c = new char[]{' ',' ',' ','@'};
+		c = new char[]{'@',' ',' ',' '};
 	}
 
 	/**
@@ -129,6 +131,9 @@ public class Dungeon {
 					lootChance = Double.parseDouble(br.readLine().substring(4));
 					enemyChance = Double.parseDouble(br.readLine().substring(4));
 					minibossChance = Double.parseDouble(br.readLine().substring(4));
+					if (br.readLine().substring(4).equals("true")) {
+						rewarded = true;
+					} else rewarded = false;
 					visitedRooms = new String[size][size][4];
 					insideRoom = new int[]{size/2, size/2};
 					String[] tempA = br.readLine().split(",");
@@ -246,6 +251,8 @@ public class Dungeon {
 					bw.newLine();
 					bw.write("mbc:" + minibossChance);
 					bw.newLine();
+					bw.write("rew:" + rewarded);
+					bw.newLine();
 					bw.write(insideRoom[0] + "," + insideRoom[1]);
 					for (int i = 0; i < size; i++) {
 						for (int j = 0; j < size; j++) {
@@ -289,6 +296,11 @@ public class Dungeon {
 				return true;
 			}
 			saveRoom();
+			if (!rewarded && checkComplete() && countContents(enemySym) == 0 && countContents(miniSym) == 0) {
+				rewarded = true;
+				System.out.print("Dungeon conquered! You got 20 gold.\n");
+				p.gold += 20;
+			}
 			action = takeInput();
 		} while (true);
 	}
@@ -530,15 +542,47 @@ public class Dungeon {
 		int count = 0;
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				for (int k = 0; k < 4; k++) {
-					if (visitedRooms[i][j][1] != null) if (visitedRooms[i][j][1].charAt(k) == search) count++;
+				if (visitedRooms[i][j][1] != null) {
+					for (int k = 0; k < 4; k++) { 
+						if (visitedRooms[i][j][1].charAt(k) == search) count++;
+					}
 				}
 			}
 		}
 		return count;
 	}
-	
+
+	/**
+	 * Checks if every hallway is leading to another room.
+	 * <p>
+	 * Private method called in the {@link #takeInput()} private method.
+	 * 
+	 * @return {@code true} if the dungeon has no open ends, {@code false} if it does.
+	 */
 	private boolean checkComplete() {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (visitedRooms[i][j][2] != null) {
+					for (int k = 0; k < 4; k++) {
+						if (visitedRooms[i][j][2].charAt(k) == '1') {
+							switch (k) {
+							case 0:
+								if (visitedRooms[i][j-1][2] == null) return false;
+								break;
+							case 1:
+								if (visitedRooms[i-1][j][2] == null) return false;
+								break;
+							case 2:
+								if (visitedRooms[i+1][j][2] == null) return false;
+								break;
+							case 3:
+								if (visitedRooms[i][j+1][2] == null) return false;
+							}
+						}
+					}
+				}
+			}
+		}
 		return true;
 	}
 
