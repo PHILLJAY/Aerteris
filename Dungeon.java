@@ -154,6 +154,7 @@ public class Dungeon {
 							}
 						}
 					}
+					resetContents();
 					c[Integer.parseInt(visitedRooms[insideRoom[0]][insideRoom[1]][3])] = playerSym;
 					br.close();
 				} catch (IOException e) {
@@ -184,6 +185,21 @@ public class Dungeon {
 				System.out.print(room);
 				saved = false;
 				break;
+			case "MbattleN": 
+				Monster monsterAdj = new Monster(
+						(int)(player.maxhealth/2+Math.random()*player.maxhealth/2), 
+						(int)(player.attack/2+Math.random()*player.attack/2), 
+						(Math.random()/4), 
+						(int)(Math.random()*2),
+						(int)(1+Math.random()*10),
+						'e'
+						);
+				Battle normalAdj = new Battle(player, monsterAdj);
+				if (player.currenthealth <= 0) return false;
+				getRoom();
+				System.out.print(room);
+				saved = false;
+				break;
 			case "battleM": 
 				Monster miniBoss = new Monster(
 						(int)(player.maxhealth/2+Math.random()*player.maxhealth/2), 
@@ -196,6 +212,21 @@ public class Dungeon {
 				Battle tough = new Battle(player, miniBoss);
 				if (player.currenthealth <= 0) return false;
 				refreshRoom();
+				System.out.print(room);
+				saved = false;
+				break;
+			case "MbattleM": 
+				Monster miniBossAdj = new Monster(
+						(int)(player.maxhealth/2+Math.random()*player.maxhealth/2), 
+						(int)(player.attack/2+Math.random()*player.attack/2), 
+						(Math.random()/4), 
+						(int)(Math.random()*2),
+						(int)(1+Math.random()*10),
+						'E'
+						);
+				Battle toughAdj = new Battle(player, miniBossAdj);
+				if (player.currenthealth <= 0) return false;
+				getRoom();
 				System.out.print(room);
 				saved = false;
 				break;
@@ -673,6 +704,8 @@ public class Dungeon {
 					case 4: return "loot";
 					case 5: return "heal";
 					case 6: return "battleM";
+					case 7: return "MbattleN";
+					case 8: return "MbattleM";
 					}
 				} else {
 					break;
@@ -685,12 +718,12 @@ public class Dungeon {
 			case "details":
 				System.out.print("Dungeon status: ");
 				if (checkComplete()) {
-					if (countContents('e') == 0 && countContents('E') == 0) {
+					if (countContents(enemySym) == 0 && countContents(miniSym) == 0) {
 						System.out.print("Conquered\n");
 					} else System.out.print("Explored\n");
 				} else System.out.print("Incomplete\n");
-				System.out.print("Discovered monsters remaining: " + countContents('e') + "\n");
-				System.out.print("Discovered tough monsters remaining: " + countContents('E') + "\n\n");
+				System.out.print("Discovered monsters remaining: " + countContents(enemySym) + "\n");
+				System.out.print("Discovered tough monsters remaining: " + countContents(miniSym) + "\n\n");
 				break;
 			case "leave": return "leave";
 			case "save": return "save";
@@ -708,11 +741,12 @@ public class Dungeon {
 	 * 
 	 * @return {@code int} corresponding to movement success and type.
 	 *
-	 * @see {@link #resetContents(int)}, {@link #refreshCoords(String)}, {@link #findPlayer(int)}
+	 * @see {@link #resetContents()}, {@link #refreshCoords(String)}, {@link #findPlayer(int)}
 	 */
 	private int tryMove(String direction) {
 		int a = 0;
 		int b = 3;
+		int ret;
 		switch (direction) {
 		case "w":
 			a = 0;
@@ -736,14 +770,40 @@ public class Dungeon {
 			System.out.print("You can't go there!\n");
 			return 0;
 		case 1:
+			ret = 1;
 			if (c[a] != enemySym && c[a] != miniSym) {
-				resetContents(0);
+				switch (a) {
+				case 0:
+					if (visitedRooms[insideRoom[0]][insideRoom[1]-1][1] != null) {
+						if (visitedRooms[insideRoom[0]][insideRoom[1]-1][1].charAt(3) == enemySym) ret = 7;
+						if (visitedRooms[insideRoom[0]][insideRoom[1]-1][1].charAt(3) == miniSym) ret = 8;
+					}
+					break;
+				case 1:
+					if (visitedRooms[insideRoom[0]-1][insideRoom[1]][1] != null) {
+						if (visitedRooms[insideRoom[0]-1][insideRoom[1]][1].charAt(2) == enemySym) ret = 7;
+						if (visitedRooms[insideRoom[0]-1][insideRoom[1]][1].charAt(2) == miniSym) ret = 8;
+					}
+					break;
+				case 2:
+					if (visitedRooms[insideRoom[0]+1][insideRoom[1]][1] != null) {
+						if (visitedRooms[insideRoom[0]+1][insideRoom[1]][1].charAt(1) == enemySym) ret = 7;
+						if (visitedRooms[insideRoom[0]+1][insideRoom[1]][1].charAt(1) == miniSym) ret = 8;
+					}
+					break;
+				case 3:
+					if (visitedRooms[insideRoom[0]][insideRoom[1]+1][1] != null) {
+						if (visitedRooms[insideRoom[0]][insideRoom[1]+1][1].charAt(0) == enemySym) ret = 7;
+						if (visitedRooms[insideRoom[0]][insideRoom[1]+1][1].charAt(0) == miniSym) ret = 8;
+					}
+				}
+				resetContents();
 				c[b] = playerSym;
 				refreshCoords(direction);
-				return 1;
+				return ret;
 			}
 		case 2:
-			int ret = 2;
+			ret = 2;
 			if (c[a] == ' ' || c[a] == playerSym);
 			else if (c[a] == enemySym) ret = 3;
 			else if (c[a] == lootSym) ret = 4;
@@ -777,13 +837,9 @@ public class Dungeon {
 	 * Sets all indexes in the contents array ({@code c}) to a whitespace {@code char}.
 	 * <p>
 	 * Private method called in the {@link #tryMove(String)} private method.
-	 * 
-	 * @param i - Index to search from; should always be called with initial value {@code 0}.
 	 */
-	private Object resetContents(int i) {
-		if (i > 3) return null;
-		c[i] = ' ';
-		return resetContents(i+1);
+	private void resetContents() {
+		c = new char[]{' ',' ',' ',' '};
 	}
 
 	/**
