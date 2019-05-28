@@ -413,8 +413,6 @@ public class Dungeon {
 	}
 
 	/**
-	 * {@code empty}
-	 * <p>
 	 * Generates item drops and enemies in rooms in based on available positions.
 	 * <p>
 	 * Private method called in the {@link #newRoom()} public method.
