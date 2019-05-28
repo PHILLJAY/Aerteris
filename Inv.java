@@ -1,8 +1,27 @@
 public class Inv {
-	//constructor
+	static //constructor
 	Item[] inventory = new Item[8];
+	
+	public void initialize() {
+		for(int z = 0; z<8;z++) {
+			inventory[z] = new Item(0);
+		}
+	}
 	public void place(int x, int y) {
 		inventory[x].setType(y);
+	}
+	
+	public void insert(int x, Item z) {
+		inventory[x] = z;
+	}
+	
+	public void ui() {
+		System.out.println("INVENTORY");
+		
+	}
+	
+	public String toString(int x,  Inv z) {
+		return printItem(inventory[x].getType());
 	}
 	
 	public static String printItem(int z) {
@@ -19,8 +38,9 @@ public class Inv {
 		return"bazinga";
 	}	
 
-	public void showInv() {
+	public void showInv(Inv y) {
 		for(int z = 0; z<8;z++) {
+			System.out.print((z+1));
 			System.out.println((inventory[z]));
 		}
 	}
