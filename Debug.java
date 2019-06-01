@@ -18,9 +18,9 @@ public class Debug {
 		Inv test =  new Inv();
 		test.place(0, 1);
 		test.place(1, 2);
-		test.showInv();
+		//test.showInv();
 		test.place(0, 2);
-		test.showInv();
+		//test.showInv();
 		
 	}
 
