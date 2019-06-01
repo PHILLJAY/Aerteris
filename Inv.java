@@ -1,7 +1,7 @@
 public class Inv {
 	static //constructor
 	Item[] inventory = new Item[8];
-	
+
 	public void initialize() {
 		for(int z = 0; z<8;z++) {
 			inventory[z] = new Item(0);
@@ -10,20 +10,50 @@ public class Inv {
 	public void place(int x, int y) {
 		inventory[x].setType(y);
 	}
-	
+
 	public void insert(int x, Item z) {
 		inventory[x] = z;
 	}
-	
+
 	public void ui() {
 		System.out.println("INVENTORY");
-		
+
 	}
-	
+
 	public String toString(int x,  Inv z) {
 		return printItem(inventory[x].getType());
 	}
-	
+
+	public void chest(int z, int y) {
+
+	}
+	public boolean isEmpty(int x) {
+		if(inventory [x].getType()==0) {
+			return true;
+		}
+		return false;
+	}
+
+	public void chestitemGen(int z, int x) {
+		// z is the type
+		//x is the level
+		int p = -1;
+		for(int i = 0; i<8 ;i++) {
+			if(this.isEmpty(p)) {
+				p=i;
+				break;
+			}
+		}
+		if(p==-1) {
+			//code replacing thing here
+			;
+			System.out.println("Which item would you like to replace?");
+			
+		}
+		this.place(p, z);
+		inventory[p].genStat(x);
+		
+	}
 	public static String printItem(int z) {
 		switch(z) {
 		case 0:
@@ -44,11 +74,11 @@ public class Inv {
 			System.out.println((inventory[z]));
 		}
 	}
-//	public static String printDesc(int z) {
-//		switch(inventory[z]) {
-//		}
-//		return"bazinga";
-//	}	
+	//	public static String printDesc(int z) {
+	//		switch(inventory[z]) {
+	//		}
+	//		return"bazinga";
+	//	}	
 
 
 	/*First int is the type of item
@@ -65,11 +95,11 @@ public class Inv {
 	 * 2 - Small Health Potion +10 health
 	 * 3 - Shelf -10 Health (you hit yourself)
 	 */
-//
-//	public static void main(String[] args) {
-//		Inv test =  new Inv();
-//		test.place(0, 2);
+	//
+	//	public static void main(String[] args) {
+	//		Inv test =  new Inv();
+	//		test.place(0, 2);
 
-//	}
+	//	}
 
 }
