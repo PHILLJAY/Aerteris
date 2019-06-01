@@ -13,7 +13,6 @@ public class Dungeon {
 
 	//constructor
 	int size;
-	private charac player;
 	private String[][][] visitedRooms;
 	private int[] insideRoom;
 	private double wallChance;
@@ -22,9 +21,10 @@ public class Dungeon {
 	private double lootChance;
 	private double enemyChance;
 	private double minibossChance;
+	private double portalChance;
 
 	//room prep
-	private char[] c = new char[4];
+	private char[] c = new char[5];
 	private char[] w = new char[18];
 	private int[] done;
 	private int[] moveType = new int[4]; //values: 0=no, 1=travel, 2=move and remain
@@ -32,16 +32,19 @@ public class Dungeon {
 	private int loc;
 	String action;
 	boolean rewarded;
+	boolean portal;
 
 	//symbols
-	private char playerSym = '@';
+	private char playerSym = 'P';
 	private char lootSym = 'C';
 	private char enemySym = 'e';
 	private char miniSym = 'E';
 	private char healSym = 'H';
+	private char portalSym = '@';
 
 	//saving
 	File file;
+	charac player;
 	BufferedReader br;
 	BufferedWriter bw, bwr;
 	private boolean saved = true;
@@ -80,13 +83,15 @@ public class Dungeon {
 	 * @param lootChance - The chance that a pocket will have a loot. Less far walls will decrease the number of chests.
 	 * @param enemyChance - The chance that an enemy will spawn in a hallway. Less walls will increase number of enemies.
 	 * @param minibossChance - The chance that a tough enemy will spawn in a hallway. Less walls will increase number of enemies.
+	 * @param portalChance - The chance that a portal will appear in a room; 1 per dungeon.
 	 * @param file - Active save file for game.
 	 * @param action - {@code String} detailing what to do when initially entering.
 	 * 
 	 * @see {@link #enterDungeon(charac)}
 	 */
-	public Dungeon(int size, double wallChance, double farWallChance, double wallChanceReduction, 
-			double lootChance, double enemyChance, double minibossChance, File file, String action) {
+	public Dungeon(int size, double wallChance, double farWallChance, 
+			double wallChanceReduction, double lootChance, double enemyChance, 
+			double minibossChance, double portalChance, File file, String action) {
 		w[16] = ' ';
 		w[17] = '+';
 		this.size = size;
@@ -96,15 +101,17 @@ public class Dungeon {
 		this.lootChance = lootChance;
 		this.enemyChance = enemyChance;
 		this.minibossChance = minibossChance;
+		this.portalChance = portalChance;
 		this.action = action;
 		//to save
 		this.file = file;
 		visitedRooms = new String[size][size][4];
 		insideRoom = new int[]{size/2, size/2};
 		rewarded = false;
+		portal = false;
 
 		w = new char[]{' ',' ',' ',' ',' ',' ',' ',' ','|','-','-','|','|','-','-','|',' ','+'};
-		c = new char[]{'@',' ',' ',' '};
+		c = new char[]{playerSym,' ',' ',' ',' '};
 	}
 
 	/**
@@ -116,8 +123,8 @@ public class Dungeon {
 	 * 
 	 * @see {@link #getRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public boolean enterDungeon(charac p) {
-		player = p;
+	public boolean enterDungeon(charac player) {
+		this.player = player;
 		do {
 			switch (action) {
 			case "load":
@@ -131,6 +138,10 @@ public class Dungeon {
 					lootChance = Double.parseDouble(br.readLine().substring(4));
 					enemyChance = Double.parseDouble(br.readLine().substring(4));
 					minibossChance = Double.parseDouble(br.readLine().substring(4));
+					portalChance = Double.parseDouble(br.readLine().substring(4));
+					if (br.readLine().substring(4).equals("true")) {
+						portal = true;
+					} else portal = false;
 					if (br.readLine().substring(4).equals("true")) {
 						rewarded = true;
 					} else rewarded = false;
@@ -206,7 +217,7 @@ public class Dungeon {
 						(int)(player.attack/2+Math.random()*player.attack/2), 
 						(Math.random()/4), 
 						(int)(Math.random()*2),
-						(int)(1+Math.random()*10),
+						(int)(1+Math.random()*20),
 						'E'
 						);
 				Battle tough = new Battle(player, miniBoss);
@@ -221,7 +232,7 @@ public class Dungeon {
 						(int)(player.attack/2+Math.random()*player.attack/2), 
 						(Math.random()/4), 
 						(int)(Math.random()*2),
-						(int)(1+Math.random()*10),
+						(int)(1+Math.random()*20),
 						'E'
 						);
 				Battle toughAdj = new Battle(player, miniBossAdj);
@@ -230,9 +241,25 @@ public class Dungeon {
 				System.out.print(room);
 				saved = false;
 				break;
+			case "portal":
+				Monster dungeonBoss = new Monster(
+						(int)(player.maxhealth/1.5+Math.random()*player.maxhealth/2), 
+						(int)(player.attack/1.5+Math.random()*player.attack/2), 
+						(Math.random()/3), 
+						(int)(Math.random()*2),
+						(int)(1+Math.random()*30),
+						'B'
+						);
+				Battle boss = new Battle(player, dungeonBoss);
+				if (player.currenthealth <= 0) return false;
+				c[4] = ' ';
+				refreshRoom();
+				System.out.print(room);
+				saved = false;
+				break;
 			case "loot":
 				int temp = (int)(1+Math.random()*10);
-				p.gold += temp;
+				player.gold += temp;
 				System.out.print("You got " + temp + " gold from the chest.\n\n");
 				refreshRoom();
 				System.out.print(room);
@@ -246,62 +273,68 @@ public class Dungeon {
 				saved = false;
 				break;
 			case "save":
-				try {
-					saveRoom();
-					bwr = new BufferedWriter(new FileWriter(file, false));
-					bwr.write("");
-					bwr.close();
-					bw = new BufferedWriter(new FileWriter(file, true));
-					bw.write("player");
-					bw.newLine();
-					bw.write("max:" + player.maxhealth);
-					bw.newLine();
-					bw.write("cur:" + player.currenthealth);
-					bw.newLine();
-					bw.write("atk:" + player.attack);
-					bw.newLine();
-					bw.write("crt:" + player.crit);
-					bw.newLine();
-					bw.write("def:" + player.defense);
-					bw.newLine();
-					bw.write("gol:" + player.gold);
-					bw.newLine();
-					bw.write("dungeon");
-					bw.newLine();
-					bw.write("siz:" + size);
-					bw.newLine();
-					bw.write("wc :" + wallChance);
-					bw.newLine();
-					bw.write("fwc:" + farWallChance);
-					bw.newLine();
-					bw.write("wcr:" + wallChanceReduction);
-					bw.newLine();
-					bw.write("lc :" + lootChance);
-					bw.newLine();
-					bw.write("ec :" + enemyChance);
-					bw.newLine();
-					bw.write("mbc:" + minibossChance);
-					bw.newLine();
-					bw.write("rew:" + rewarded);
-					bw.newLine();
-					bw.write(insideRoom[0] + "," + insideRoom[1]);
-					for (int i = 0; i < size; i++) {
-						for (int j = 0; j < size; j++) {
-							bw.newLine();
-							if (visitedRooms[i][j][0] == null) {
-								bw.write(":::");
-							} else {
-								bw.write(visitedRooms[i][j][0] + ":" + visitedRooms[i][j][1] + ":" + 
-										visitedRooms[i][j][2] + ":" + visitedRooms[i][j][3]);
+				if (file != null) {
+					try {
+						saveRoom();
+						bwr = new BufferedWriter(new FileWriter(file, false));
+						bwr.write("");
+						bwr.close();
+						bw = new BufferedWriter(new FileWriter(file, true));
+						bw.write("player");
+						bw.newLine();
+						bw.write("max:" + player.maxhealth);
+						bw.newLine();
+						bw.write("cur:" + player.currenthealth);
+						bw.newLine();
+						bw.write("atk:" + player.attack);
+						bw.newLine();
+						bw.write("crt:" + player.crit);
+						bw.newLine();
+						bw.write("def:" + player.defense);
+						bw.newLine();
+						bw.write("gol:" + player.gold);
+						bw.newLine();
+						bw.write("dungeon");
+						bw.newLine();
+						bw.write("siz:" + size);
+						bw.newLine();
+						bw.write("wc :" + wallChance);
+						bw.newLine();
+						bw.write("fwc:" + farWallChance);
+						bw.newLine();
+						bw.write("wcr:" + wallChanceReduction);
+						bw.newLine();
+						bw.write("lc :" + lootChance);
+						bw.newLine();
+						bw.write("ec :" + enemyChance);
+						bw.newLine();
+						bw.write("mbc:" + minibossChance);
+						bw.newLine();
+						bw.write("pc :" + portalChance);
+						bw.newLine();
+						bw.write("por:" + portal);
+						bw.newLine();
+						bw.write("rew:" + rewarded);
+						bw.newLine();
+						bw.write(insideRoom[0] + "," + insideRoom[1]);
+						for (int i = 0; i < size; i++) {
+							for (int j = 0; j < size; j++) {
+								bw.newLine();
+								if (visitedRooms[i][j][0] == null) {
+									bw.write(":::");
+								} else {
+									bw.write(visitedRooms[i][j][0] + ":" + visitedRooms[i][j][1] + ":" + 
+											visitedRooms[i][j][2] + ":" + visitedRooms[i][j][3]);
+								}
 							}
 						}
+						bw.close();
+						saved = true;
+						System.out.print("Game saved.\n\n");
+					} catch (IOException e) {
+						e.getMessage();
 					}
-					bw.close();
-					saved = true;
-					System.out.print("Game saved.\n\n");
-				} catch (IOException e) {
-					e.getMessage();
-				}
+				} else System.out.print("Saving disabled.\n\n");
 				break;
 			case "exit":
 				if (!saved) {
@@ -329,8 +362,8 @@ public class Dungeon {
 			saveRoom();
 			if (!rewarded && checkComplete() && countContents(enemySym) == 0 && countContents(miniSym) == 0) {
 				rewarded = true;
-				System.out.print("Dungeon conquered! You got 20 gold.\n");
-				p.gold += 20;
+				System.out.print("Dungeon cleared! You got 20 gold.\n");
+				player.gold += 20;
 			}
 			action = takeInput();
 		} while (true);
@@ -462,6 +495,9 @@ public class Dungeon {
 				}
 			}
 		}
+		if (!portal) if (Math.random() < portalChance) {
+			c[4] = portalSym;
+		}
 	}
 
 	/**
@@ -475,7 +511,7 @@ public class Dungeon {
 				w[16] + w[16] + w[16] + w[16] + w[8 ] + w[16] + w[16] + w[16] + c[0 ] + w[16] + w[16] + w[16] + w[8 ] + w[16] + w[16] + w[16] + w[16] + "\n" +
 				w[13] + w[9 ] + w[9 ] + w[9 ] + w[17] + w[0 ] + w[0 ] + w[0 ] + w[0 ] + w[0 ] + w[0 ] + w[0 ] + w[17] + w[10] + w[10] + w[10] + w[14] + "\n" +
 				w[5 ] + w[16] + w[16] + w[16] + w[1 ] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[2 ] + w[16] + w[16] + w[16] + w[6 ] + "\n" +
-				w[5 ] + w[16] + c[1 ] + w[16] + w[1 ] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[2 ] + w[16] + c[2 ] + w[16] + w[6 ] + "\n" +
+				w[5 ] + w[16] + c[1 ] + w[16] + w[1 ] + w[16] + w[16] + w[16] + c[4 ] + w[16] + w[16] + w[16] + w[2 ] + w[16] + c[2 ] + w[16] + w[6 ] + "\n" +
 				w[5 ] + w[16] + w[16] + w[16] + w[1 ] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[16] + w[2 ] + w[16] + w[16] + w[16] + w[6 ] + "\n" +
 				w[13] + w[9 ] + w[9 ] + w[9 ] + w[17] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[3 ] + w[17] + w[10] + w[10] + w[10] + w[14] + "\n" +
 				w[16] + w[16] + w[16] + w[16] + w[11] + w[16] + w[16] + w[16] + c[3 ] + w[16] + w[16] + w[16] + w[11] + w[16] + w[16] + w[16] + w[16] + "\n" +
@@ -525,7 +561,7 @@ public class Dungeon {
 				w[15] +
 				w[16] +
 				w[17];
-		visitedRooms[x][y][1] = "" + cCopy[0] + cCopy[1] + cCopy[2] + cCopy[3];
+		visitedRooms[x][y][1] = "" + cCopy[0] + cCopy[1] + cCopy[2] + cCopy[3] + cCopy[4];
 		visitedRooms[x][y][2] = "" + moveType[0] + moveType[1] + moveType[2] + moveType[3];
 		visitedRooms[x][y][3] = "" + loc;
 		//System.out.println(visitedRooms[insideRoom[0]][insideRoom[1]]);
@@ -549,7 +585,7 @@ public class Dungeon {
 			loc = findPlayer(0);
 			c = visitedRooms[x][y][1].toCharArray();
 			c[loc] = playerSym;
-			//moveType = visitedRooms[x][y][2].chars().map(c -> c-'0').toArray(); //ngl copy pasted this one but I think I get it; it turns a string into an int array
+			//moveType = visitedRooms[x][y][2].chars().map(c -> c-'0').toArray(); //ngl copy pasted this one but I think I get it; it turns a string into an int array UPDATE: doesnt work on older versions aka at school
 			for (int i = 0; i < moveType.length; i++) {
 				moveType[i] = Character.getNumericValue(visitedRooms[x][y][2].charAt(i));
 			}
@@ -572,7 +608,7 @@ public class Dungeon {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				if (visitedRooms[i][j][1] != null) {
-					for (int k = 0; k < 4; k++) { 
+					for (int k = 0; k < 5; k++) { 
 						if (visitedRooms[i][j][1].charAt(k) == search) count++;
 					}
 				}
@@ -719,11 +755,18 @@ public class Dungeon {
 				System.out.print("Dungeon status: ");
 				if (checkComplete()) {
 					if (countContents(enemySym) == 0 && countContents(miniSym) == 0) {
-						System.out.print("Conquered\n");
+						if (countContents(portalSym) == 0) {
+							System.out.print("Conquered\n");
+						} else System.out.print("Cleared\n");
 					} else System.out.print("Explored\n");
 				} else System.out.print("Incomplete\n");
 				System.out.print("Discovered monsters remaining: " + countContents(enemySym) + "\n");
-				System.out.print("Discovered tough monsters remaining: " + countContents(miniSym) + "\n\n");
+				System.out.print("Discovered tough monsters remaining: " + countContents(miniSym) + "\n");
+				System.out.print("Discovered portals remaining: " + countContents(portalSym) + "\n\n");
+				break;
+			case "portal":
+				if (c[4] == portalSym) return "portal";
+				System.out.print("There is no portal in this room!\n\n");
 				break;
 			case "leave": return "leave";
 			case "save": return "save";
@@ -839,7 +882,7 @@ public class Dungeon {
 	 * Private method called in the {@link #tryMove(String)} private method.
 	 */
 	private void resetContents() {
-		c = new char[]{' ',' ',' ',' '};
+		c = new char[]{' ',' ',' ',' ',' '};
 	}
 
 	/**
