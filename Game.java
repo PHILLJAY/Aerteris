@@ -206,7 +206,7 @@ public class Game {
 
 	private void play(String init) { 
 
-		Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, file, init);
+		Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
 
 		d.enterDungeon(player);
 
