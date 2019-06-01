@@ -348,14 +348,6 @@ public class Dungeon {
 				System.out.print("Exiting game.");
 				return false;
 			case "leave":
-				if (!saved) {
-					System.out.print("Are you sure you want to leave without saving? [y] [n] ");
-					check = input.next();
-					if (!check.equals("y")) {
-						System.out.print("Returning to game...\n\n");
-						break;
-					}
-				}
 				System.out.print("You left the dungeon.\n\n");
 				return true;
 			}
