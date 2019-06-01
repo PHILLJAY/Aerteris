@@ -22,7 +22,7 @@ public class Monster extends charac {
 	String[] b = new String[] { 
 			"Joker", 
 			"fibonacci", 
-			"Gran torino",
+			"Gran Torino",
 			"Master of Coins"
 			};
 	
