@@ -14,7 +14,7 @@ public class Game {
 	File file;
 	private BufferedReader br;
 	private BufferedWriter bw, bwr;
-	charac player;
+	static charac player;
 
 	boolean spaceMode = false;
 	char s = ' ';

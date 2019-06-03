@@ -44,7 +44,7 @@ public class Dungeon {
 
 	//saving
 	File file;
-	charac player;
+	static charac player;
 	BufferedReader br;
 	BufferedWriter bw, bwr;
 	private boolean saved = true;
