@@ -20,6 +20,65 @@ public class Game {
 	char s = ' ';
 	private String name;
 
+	//structures
+	private String[] structure = {"dungeon ","  shop  "," hotel  "," chest  ","end game"};
+	String[][] contentsVisual;
+	private String[][] dungeon = {
+			{
+				"                  ",
+				"       ____       ",
+				"      /    \\__.   ",
+				"   .-'    _ __ \\  ",
+				"  /  .-'.[@]  | \\ ",
+				".'_______[@]__|__\\"
+			},{
+				"                  ",
+				"                  ",
+				"                  ",
+				"            _     ",
+				"    _____.-' \\    ",
+				"    \\____\\.-'     "
+			},{
+				"   , , , .        ",
+				"   [  ~]./'.      ",
+				"    |-|./   '.    ",
+				"    |\\|  '.~/__   ",
+				"    | |    \\ ~.|  ",
+				"    |@|     |  |  "
+			}
+	};
+	private String[] shop = {
+			"   .----------.   ",
+			"   |'----------'  ",
+			"   |    O    |    ",
+			"   |   /|\\   |    ",
+			"   |'=========]   ",
+			"   '|_________]   "
+	};
+	private String[] hotel = {
+			"     ________     ",
+			"    /       /\\    ",
+			"   /_______/ o\\   ",
+			"    | O  O |  |   ",
+			"    |__[]__|_-’   ",
+			"    .-'.'         "
+	};
+	private String[] chest = {
+			"                  ",
+			"                  ",
+			"                  ",
+			"       _____      ",
+			"      /_._/_\\     ",
+			"      |___|_|     "
+	};
+	private String[] endGame = {
+			"     push me!     ",
+			"      _____       ",
+			"     | (0) |      ",
+			"     |_____|      ",
+			"        |         ",
+			"        |         "
+	};
 
 	public Game() {
 
@@ -90,7 +149,7 @@ public class Game {
 			} else if (startAction.equals("blank")) {
 				clearConsole();
 				player = new charac(20,3,0.2,0,0);
-				play("new");
+				play("no","new");
 				flag = true;
 			} else if (startAction.equals("space")) {
 				spaceMode = true; 
@@ -138,7 +197,7 @@ public class Game {
 
 		clearConsole();
 		player = new charac(20,3,0.2,0,0);
-		play("new");
+		play("no","new");
 
 	}
 
@@ -191,9 +250,10 @@ public class Game {
 						int gol = Integer.parseInt(br.readLine().substring(4));
 						player = new charac(max,atk,crt,def,gol);
 						player.currenthealth = cur;
+						String start = br.readLine();
 						br.close();
 						clearConsole();
-						play("load");
+						play(start, "load");
 						break;
 					}
 				} catch (IOException e) {
@@ -204,12 +264,55 @@ public class Game {
 
 	}
 
-	private void play(String init) { 
+	private void play(String start, String init) { 
 
-		Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
+		if (start.equals("dungeon")) {
+			Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
+			if (!d.enterDungeon(player)) return;
+		}
 
-		d.enterDungeon(player);
+		//while (true) {
+			//generate
+			int[][] contents = {{(int)(Math.floor(Math.random()*5)),0},
+					{(int)(Math.floor(Math.random()*5)),0},{(int)(Math.floor(Math.random()*5)),0}};
+			//build
+			contentsVisual = new String[3][6];
+			for (int i = 0; i < 3; i++) {
+				switch (contents[i][0]) {
+				case 0:
+					contentsVisual[i] = dungeon[(int)(Math.floor(Math.random()*3))];
+					break;
+				case 1:
+					contentsVisual[i] = shop;
+					break;
+				case 2:
+					contentsVisual[i] = hotel;
+					break;
+				case 3:
+					contentsVisual[i] = chest;
+					break;
+				case 4:
+					contentsVisual[i] = endGame;
+				}
+			}
+			printContents();
+			//approach
+			//check contents
+			//do things
+		//}
 
+	}
+
+	private void printContents() {
+		System.out.print("" +
+				" " + contentsVisual[0][0] + " " + contentsVisual[1][0] + " " + contentsVisual[2][0] + "\n" +
+				" " + contentsVisual[0][1] + " " + contentsVisual[1][1] + " " + contentsVisual[2][1] + "\n" +
+				" " + contentsVisual[0][2] + " " + contentsVisual[1][2] + " " + contentsVisual[2][2] + "\n" +
+				" " + contentsVisual[0][3] + " " + contentsVisual[1][3] + " " + contentsVisual[2][3] + "\n" +
+				" " + contentsVisual[0][4] + " " + contentsVisual[1][4] + " " + contentsVisual[2][4] + "\n" +
+				" " + contentsVisual[0][5] + " " + contentsVisual[1][5] + " " + contentsVisual[2][5] + "\n\n" +
+				"_________[1]________________[2]________________[3]__________\n"
+				);
 	}
 
 	private void clearConsole() {
