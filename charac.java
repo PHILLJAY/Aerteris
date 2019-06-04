@@ -9,15 +9,16 @@ public class charac {
 	public int currenthealth;
 	public int mana;
 	public int tempdamage;
+	public int xp;
 	
-	
-	public charac(int maxhealth, int attack,double crit, int defense,int gold){
+	public charac(int maxhealth, int attack,double crit, int defense,int gold,int xp){
 		this.maxhealth = maxhealth;
 		this.defense = defense;
 		this.attack=attack;
 		this.currenthealth=maxhealth;
 		this.crit=crit;
 		this.gold=gold;
+		this.xp=xp;
 	}
 	
 	
