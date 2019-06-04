@@ -20,6 +20,8 @@ public class Game {
 	char s = ' ';
 	private String name;
 
+	private boolean saved = false;
+
 	//structures
 	private String[] structure = {"dungeon ","  shop  "," hotel  "," chest  ","end game"};
 	String[][] contentsVisual;
@@ -148,7 +150,7 @@ public class Game {
 				flag = true;
 			} else if (startAction.equals("blank")) {
 				clearConsole();
-				player = new charac(20,3,0.2,0,0);
+				player = new charac(20,3,0.2,0,0,0);
 				play("no","new");
 				flag = true;
 			} else if (startAction.equals("space")) {
@@ -196,7 +198,7 @@ public class Game {
 		}
 
 		clearConsole();
-		player = new charac(20,3,0.2,0,0);
+		player = new charac(20,3,0.2,0,0,0);
 		play("no","new");
 
 	}
@@ -248,7 +250,8 @@ public class Game {
 						double crt = Double.parseDouble(br.readLine().substring(4));
 						int def = Integer.parseInt(br.readLine().substring(4));
 						int gol = Integer.parseInt(br.readLine().substring(4));
-						player = new charac(max,atk,crt,def,gol);
+						int exp = Integer.parseInt(br.readLine().substring(4));
+						player = new charac(max,atk,crt,def,gol,exp);
 						player.currenthealth = cur;
 						String start = br.readLine();
 						br.close();
@@ -271,7 +274,7 @@ public class Game {
 			if (!d.enterDungeon(player)) return;
 		}
 
-		//while (true) {
+		while (true) {
 			//generate
 			int[][] contents = {{(int)(Math.floor(Math.random()*5)),0},
 					{(int)(Math.floor(Math.random()*5)),0},{(int)(Math.floor(Math.random()*5)),0}};
@@ -296,15 +299,65 @@ public class Game {
 				}
 			}
 			printContents();
-			//approach
-			//check contents
-			//do things
-		//}
+			//act
+			while (true) {
+				int approachContent = inputApproach();
+				if (approachContent < 3) {
+					if (contents[approachContent][1] == 0) {
+						switch (contents[approachContent][0]) {
+						case 0:
+							Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
+							System.out.print("You entered a dungeon!\n");
+							if (!d.enterDungeon(player)) return;
+							contents[approachContent][1] = 1;
+							break;
+						case 1:
+							//shop
+							contents[approachContent][1] = 1;
+							break;
+						case 2:
+							//hotel
+							contents[approachContent][1] = 1;
+							break;
+						case 3:
+							//chest
+							contents[approachContent][1] = 1;
+							break;
+						case 4:
+							//end game
+							contents[approachContent][1] = 1;
+							break;
+						}
+						//if I was to change appearance (ie close door, open chest), now would be the time
+						printContents();
+					} else {
+						switch (contents[approachContent][0]) {
+						case 0: case 3: case 4: //dungeon, chest, end
+							System.out.print("You cannot visit this again!\n");
+							break;
+						case 1:
+							//load shop
+							break;
+						case 2:
+							//load hotel
+						}
+					}
+				} else {
+					switch (approachContent) {
+					case 4:
+						return;
+					case 3:
+						break;
+					}
+					break;
+				}
+			}
 
+		}
 	}
 
 	private void printContents() {
-		System.out.print("" +
+		System.out.print("\n" +
 				" " + contentsVisual[0][0] + " " + contentsVisual[1][0] + " " + contentsVisual[2][0] + "\n" +
 				" " + contentsVisual[0][1] + " " + contentsVisual[1][1] + " " + contentsVisual[2][1] + "\n" +
 				" " + contentsVisual[0][2] + " " + contentsVisual[1][2] + " " + contentsVisual[2][2] + "\n" +
@@ -313,6 +366,58 @@ public class Game {
 				" " + contentsVisual[0][5] + " " + contentsVisual[1][5] + " " + contentsVisual[2][5] + "\n\n" +
 				"_________[1]________________[2]________________[3]__________\n"
 				);
+	}
+
+	private int inputApproach() {
+		while (true) {
+			System.out.print("Input: ");
+			String approach = in.next();
+			switch (approach) {
+			case "1":
+				saved = false;
+				return 0;
+			case "2":
+				saved = false;
+				return 1;
+			case "3":
+				saved = false;
+				return 2;
+			case "leave":
+				if (player.gold >= 5) {
+					player.gold -= 5;
+					System.out.print("Moving to new area, you payed 5 gold.\n\n");
+					saved = false;
+					return 3;
+				}
+				else System.out.print("You need " + (5-player.gold) + " gold to do that!\n");
+				break;
+			case "exit":
+				if (!saved) {
+					System.out.print("Are you sure you want to exit without saving? [y] [n] ");
+					if (!in.next().equals("y")) {
+						System.out.print("Returning to game...\n\n");
+						break;
+					}
+				}
+				System.out.print("Exiting game.");
+				return 4;
+			case "save":
+				saved = true;
+				break;
+			case "list":
+				System.out.print("" +
+						"\"list\" - list all acceptable inputs" + "\n" +
+						"\"1\" - approach structure 1" + "\n" +
+						"\"2\" - approach structure 2" + "\n" +
+						"\"3\" - approach structure 3" + "\n" +
+						"\"leave\" - move to new area (costs 5 gold), DOES NOT SAVE" + "\n" +
+						"\"save\" - saves progress and player stats to file" + "\n" +
+						"\"exit\" - exits game, DOES NOT SAVE" + "\n" +
+						"\n"
+						);
+
+			}
+		}
 	}
 
 	private void clearConsole() {
