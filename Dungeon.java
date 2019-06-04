@@ -188,6 +188,7 @@ public class Dungeon {
 						(Math.random()/4), 
 						(int)(Math.random()*2),
 						(int)(1+Math.random()*10),
+						(int)(1+Math.random()*10),
 						'e'
 						);
 				Battle normal = new Battle(player, monster);
@@ -202,6 +203,7 @@ public class Dungeon {
 						(int)(player.attack/2+Math.random()*player.attack/2), 
 						(Math.random()/4), 
 						(int)(Math.random()*2),
+						(int)(1+Math.random()*10),
 						(int)(1+Math.random()*10),
 						'e'
 						);
@@ -218,6 +220,7 @@ public class Dungeon {
 						(Math.random()/4), 
 						(int)(Math.random()*2),
 						(int)(1+Math.random()*20),
+						(int)(1+Math.random()*20),
 						'E'
 						);
 				Battle tough = new Battle(player, miniBoss);
@@ -233,6 +236,7 @@ public class Dungeon {
 						(Math.random()/4), 
 						(int)(Math.random()*2),
 						(int)(1+Math.random()*20),
+						(int)(1+Math.random()*20),
 						'E'
 						);
 				Battle toughAdj = new Battle(player, miniBossAdj);
@@ -247,7 +251,8 @@ public class Dungeon {
 						(int)(player.attack/1.5+Math.random()*player.attack/2), 
 						(Math.random()/3), 
 						(int)(Math.random()*2),
-						(int)(1+Math.random()*30),
+						(int)(20+Math.random()*11), //20-30
+						(int)(30+Math.random()*21), //30-50
 						'B'
 						);
 				Battle boss = new Battle(player, dungeonBoss);
@@ -293,6 +298,8 @@ public class Dungeon {
 						bw.write("def:" + player.defense);
 						bw.newLine();
 						bw.write("gol:" + player.gold);
+						bw.newLine();
+						bw.write("exp:" + player.xp);
 						bw.newLine();
 						bw.write("dungeon");
 						bw.newLine();
@@ -740,7 +747,8 @@ public class Dungeon {
 				}
 			case "inventory":
 				System.out.print("Current health: " + player.currenthealth + "\n");
-				System.out.print("Gold: " + player.gold + "\n\n");
+				System.out.print("Gold: " + player.gold + "\n");
+				System.out.print("XP: " + player.xp + "\n\n");
 				//manageInventory?
 				break;
 			case "details":
