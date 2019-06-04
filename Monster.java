@@ -72,7 +72,7 @@ public class Monster extends charac {
 		break;
 	case "Blood Priest":
 		if(m.currenthealth>m.attack) {
-		System.out.println("> "+m.name+" uses blood magic and sacrifices " +m.attack+" of his health and deals " +m.attack*2+" damage! \n");
+		System.out.println("> "+m.name+" uses blood magic and sacrifices " +m.attack+" of\n his health and deals " +m.attack*2+" damage! \n");
 		p.currenthealth+=p.defense-(m.attack*2);
 		m.currenthealth-=m.attack;} 
 		else Battle.BasicMonsterAttack(p, m);
