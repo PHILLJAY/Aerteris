@@ -44,7 +44,7 @@ public class Dungeon {
 
 	//saving
 	File file;
-	static charac player;
+	charac player;
 	BufferedReader br;
 	BufferedWriter bw, bwr;
 	private boolean saved = true;
@@ -192,7 +192,10 @@ public class Dungeon {
 						'e'
 						);
 				Battle normal = new Battle(player, monster);
-				if (player.currenthealth <= 0) return false;
+				if (player.currenthealth <= 0) {
+					deathStats();
+					return false;
+				}
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
@@ -208,7 +211,10 @@ public class Dungeon {
 						'e'
 						);
 				Battle normalAdj = new Battle(player, monsterAdj);
-				if (player.currenthealth <= 0) return false;
+				if (player.currenthealth <= 0) {
+					deathStats();					
+					return false;
+				}
 				getRoom();
 				System.out.print(room);
 				saved = false;
@@ -224,7 +230,10 @@ public class Dungeon {
 						'E'
 						);
 				Battle tough = new Battle(player, miniBoss);
-				if (player.currenthealth <= 0) return false;
+				if (player.currenthealth <= 0) {
+					deathStats();
+					return false;
+				}
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
@@ -240,7 +249,10 @@ public class Dungeon {
 						'E'
 						);
 				Battle toughAdj = new Battle(player, miniBossAdj);
-				if (player.currenthealth <= 0) return false;
+				if (player.currenthealth <= 0) {
+					deathStats();
+					return false;
+				}
 				getRoom();
 				System.out.print(room);
 				saved = false;
@@ -256,7 +268,10 @@ public class Dungeon {
 						'B'
 						);
 				Battle boss = new Battle(player, dungeonBoss);
-				if (player.currenthealth <= 0) return false;
+				if (player.currenthealth <= 0) {
+					deathStats();
+					return false;
+				}
 				c[4] = ' ';
 				refreshRoom();
 				System.out.print(room);
@@ -271,8 +286,13 @@ public class Dungeon {
 				saved = false;
 				break;
 			case "heal":
-				System.out.print("Your health has been refilled!\n\n");
-				player.currenthealth = player.maxhealth;
+				if (player.currenthealth + 10 > player.maxhealth) {
+					player.currenthealth = player.maxhealth;
+					System.out.print("You have been fully healed!\n\n");
+				} else {
+					player.currenthealth += 10;
+					System.out.print("You healed 10 health points!\n\n");
+				}
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
@@ -748,7 +768,7 @@ public class Dungeon {
 			case "inventory":
 				System.out.print("Current health: " + player.currenthealth + "\n");
 				System.out.print("Gold: " + player.gold + "\n");
-				System.out.print("XP: " + player.xp + "\n\n");
+				System.out.print("XP: " + player.xp + " (level " + getLevel(player.xp) + ")\n\n");
 				//manageInventory?
 				break;
 			case "details":
@@ -884,7 +904,46 @@ public class Dungeon {
 	private void resetContents() {
 		c = new char[]{' ',' ',' ',' ',' '};
 	}
+	
+	/**
+	 * Prints stats out that the player might want to see to track score upon death.
+	 * <p>
+	 * Private method called in the {@link #enterDungeon(charac)} public method.
+	 * 
+	 * @see {@link #getLevel(int)}
+	 */
+	private void deathStats() {
+		String killed;
+		int overkill = -1*player.currenthealth;
+		if (overkill == 0) killed = "Damaged just enough to die\n";
+		else if (overkill == 1) killed = "Damaged " + overkill + " health point past death";
+		else killed = "Damaged " + overkill + " health points past death";
+		System.out.print("\nYour stats:\n" +
+				player.gold + " gold\n" +
+				player.xp + " experience points (level " + getLevel(player.xp) + ")\n" + 
+				killed
+				);
+		//inventory?
+	}
 
+	/**
+	 * Converts an xp stat into a level value.
+	 * <p>
+	 * Private method called in the {@link #deathStats()} private method.
+	 * 
+	 * @param xp - The xp value to convert.
+	 * 
+	 * @return {@code int} corresponding to the level of the item.
+	 */
+	public int getLevel(int xp) {
+		int i = 1;
+		while (true) {
+			xp -= 15 * i;
+			if (xp < 0) return i;
+			i++;
+		}
+	}
+	
 	/**
 	 * Lists all valid inputs for {@link #takeInput()}.
 	 * <p>
