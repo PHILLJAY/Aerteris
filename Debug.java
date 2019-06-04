@@ -40,7 +40,7 @@ public class Debug {
 	}
 	
 	public static void fighting() {
-		charac player = new charac(40,7,0.2,0,0);
+		/*charac player = new charac(40,7,0.2,0,0);
 		Monster monster = new Monster(
 				(int)((player.maxhealth/2)+Math.floor(Math.random()*(player.maxhealth/2))-(player.maxhealth/4)), 
 				(int)((player.attack/2)+Math.floor(Math.random()*(player.attack/2))-(player.attack/4)), 
@@ -48,7 +48,7 @@ public class Debug {
 				(int)((player.defense/2)+Math.floor(Math.random()*(player.defense/2))-(player.defense/4)), 
 				10
 				);
-		Battle b = new Battle(player, monster);
+		Battle b = new Battle(player, monster);*/
 	}
 	
 }
