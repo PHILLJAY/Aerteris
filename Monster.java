@@ -27,21 +27,21 @@ public class Monster extends charac {
 			};
 	
 	
-	public Monster(int maxhealth, int attack, double crit,int defense,int gold) {
-		super(maxhealth,attack,crit,defense,gold);
+	public Monster(int maxhealth, int attack, double crit,int defense,int gold, int xp) {
+		super(maxhealth,attack,crit,defense,gold,xp);
 		this.name=n[(int)(Math.floor(Math.random()*n.length))];
 		// TODO Auto-generated constructor stub
 	}
 	
 	//just to test specific monsters
-	public Monster(int maxhealth, int attack, double crit,int defense,int gold,String n) {
-		super(maxhealth,attack,crit,defense,gold);
+	public Monster(int maxhealth, int attack, double crit,int defense,int gold,int xp,String n) {
+		super(maxhealth,attack,crit,defense,gold,xp);
 		this.name=n;
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Monster(int maxhealth, int attack, double crit,int defense,int gold,char type) {
-		super(maxhealth,attack,crit,defense,gold);
+	public Monster(int maxhealth, int attack, double crit,int defense,int gold,int xp,char type) {
+		super(maxhealth,attack,crit,defense,gold,xp);
 		switch(type) {
 		case 'e':
 			this.name=n[(int)(Math.floor(Math.random()*n.length))];
@@ -127,6 +127,19 @@ public class Monster extends charac {
 	}
 	
 
+	public static void PrintBoos() {
+		System.out.println(
+			" .-._                                                   _,-,\r\n" + 
+			"  `._`-._                                           _,-'_,'\r\n" + 
+			"     `._ `-._                                   _,-' _,'\r\n" + 
+			"        `._  `-._        __.-----.__        _,-'  _,'\r\n" + 
+			"           `._   `#===\"\"\"           \"\"\"===#'   _,'\r\n" + 
+			"              `._/)  ._               _.  (\\_,'\r\n" + 
+			"               )*'     **.__     __.**     '*( \r\n" + 
+			"               #  .==..__  \"\"   \"\"  __..==,  # \r\n" + 
+			"               #   `\"._(_).       .(_)_.\"'   #");
+		
+	}
 	
 
 	public static int fibonacciy(int x) {
