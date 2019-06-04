@@ -10,6 +10,7 @@ public class Battle {
 	public Battle(charac x,Monster y ) {
 		System.out.println("\n-------------------------------");
 		System.out.println("# "+y.name+" Appears! # \n");
+		if(y.name.equals("Dungeon Boss")) y.PrintBoos();
 		int lostg = y.gold;
 		while(true) {
 			if(isDead(x)==false) {
@@ -20,7 +21,7 @@ public class Battle {
 					attack(x,y);
 				} else if(n=='b') { 
 					if(Bribe(x,y)) {
-						System.out.println("> You threw " +lostg+" gold on the ground and ran away");
+						System.out.println("> You threw " +lostg+" on the ground and ran away");
 						x.gold-=lostg;
 						y.gold+=lostg;
 						System.out.println("> You have " +x.gold+" gold left");
@@ -35,10 +36,13 @@ public class Battle {
 				break;
 			}
 			if(isMonsterDead(y)==false) {
-				monsterattack(x,y);
+				if(y.name.equals("Dungeon Boss")) Monster.SpecialAttack(x, y, y.name);
+				else monsterattack(x,y);
 			}else {
 				System.out.println("> you won \n> "+y.name + " dropped " +y.gold + " gold!");
 				x.gold+=y.gold;
+				System.out.println("> you gained "+ y.xp+" xp!");
+				x.xp+=y.xp;
 				break;
 			}
 		}
