@@ -14,13 +14,14 @@ public class Game {
 	File file;
 	private BufferedReader br;
 	private BufferedWriter bw, bwr;
-	static charac player;
+	charac player;
 
 	boolean spaceMode = false;
 	char s = ' ';
 	private String name;
 
 	private boolean saved = false;
+	private boolean first = true;
 
 	//structures
 	private String[] structure = {"dungeon ","  shop  "," hotel  "," chest  ","end game"};
@@ -278,6 +279,8 @@ public class Game {
 			//generate
 			int[][] contents = {{(int)(Math.floor(Math.random()*5)),0},
 					{(int)(Math.floor(Math.random()*5)),0},{(int)(Math.floor(Math.random()*5)),0}};
+			if (first) contents[1][0] = 0; //guaranteed first-time dungeon
+			first = false;
 			//build
 			contentsVisual = new String[3][6];
 			for (int i = 0; i < 3; i++) {
@@ -385,11 +388,12 @@ public class Game {
 			case "leave":
 				if (player.gold >= 5) {
 					player.gold -= 5;
-					System.out.print("Moving to new area, you payed 5 gold.\n\n");
+					System.out.print("Moving to new area, you payed 5 gold (" + 
+					player.gold + " left).\n\n");
 					saved = false;
 					return 3;
 				}
-				else System.out.print("You need " + (5-player.gold) + " gold to do that!\n");
+				else System.out.print("You need " + (5-player.gold) + " more gold to do that!\n");
 				break;
 			case "exit":
 				if (!saved) {
@@ -419,7 +423,6 @@ public class Game {
 			}
 		}
 	}
-
 	private void clearConsole() {
 		System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 	}
