@@ -1,9 +1,15 @@
 public class Inv {
-	static //constructor
-	Item[] inventory = new Item[8];
+
+	Item[] inventory;
+	int size;
+	
+	public Inv(int size) {
+		this.size = size;
+		inventory = new Item[size];
+	}
 
 	public void initialize() {
-		for(int z = 0; z<8;z++) {
+		for(int z = 0; z<size;z++) {
 			inventory[z] = new Item(0);
 		}
 	}
@@ -34,11 +40,11 @@ public class Inv {
 		return false;
 	}
 
-	public void chestitemGen(int z, int x) {
+	public void chestitemGen(int z, int x) { //type, level
 		// z is the type
 		//x is the level
 		int p = -1;
-		for(int i = 0; i<8 ;i++) {
+		for(int i = 0; i<size ;i++) {
 			if(this.isEmpty(p)) {
 				p=i;
 				break;
@@ -48,11 +54,11 @@ public class Inv {
 			//code replacing thing here
 			;
 			System.out.println("Which item would you like to replace?");
-			
+
 		}
 		this.place(p, z);
 		inventory[p].genStat(x);
-		
+
 	}
 	public static String printItem(int z) {
 		switch(z) {
@@ -68,9 +74,9 @@ public class Inv {
 		return"bazinga";
 	}	
 
-	public void showInv(Inv y) {
-		for(int z = 0; z<8;z++) {
-			System.out.print((z+1));
+	public void showInv() {
+		for(int z = 0; z<size;z++) {
+			System.out.print((z+1) + ": ");
 			System.out.println((inventory[z]));
 		}
 	}
