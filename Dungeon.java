@@ -31,8 +31,8 @@ public class Dungeon {
 	private Scanner input = new Scanner(System.in);
 	private int loc;
 	String action;
-	boolean rewarded;
-	boolean portal;
+	private boolean rewarded;
+	private boolean portal;
 
 	//symbols
 	private char playerSym = 'P';
@@ -45,10 +45,12 @@ public class Dungeon {
 	//saving
 	File file;
 	charac player;
+	Inv inv;
 	BufferedReader br;
 	BufferedWriter bw, bwr;
 	private boolean saved = true;
 	private String check;
+	private int lastLevel;
 
 	/* 
 	 * Layout:
@@ -123,8 +125,10 @@ public class Dungeon {
 	 * 
 	 * @see {@link #getRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public boolean enterDungeon(charac player) {
+	public boolean enterDungeon(charac player, Inv inv) {
 		this.player = player;
+		this.inv = inv;
+		lastLevel = player.getLevel();
 		do {
 			switch (action) {
 			case "load":
@@ -196,6 +200,7 @@ public class Dungeon {
 					deathStats();
 					return false;
 				}
+				levelUp();
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
@@ -215,6 +220,7 @@ public class Dungeon {
 					deathStats();					
 					return false;
 				}
+				levelUp();
 				getRoom();
 				System.out.print(room);
 				saved = false;
@@ -226,7 +232,7 @@ public class Dungeon {
 						(Math.random()/4), 
 						(int)(Math.random()*2),
 						(int)(1+Math.random()*20),
-						(int)(1+Math.random()*20),
+						(int)(10+Math.random()*11),
 						'E'
 						);
 				Battle tough = new Battle(player, miniBoss);
@@ -234,6 +240,7 @@ public class Dungeon {
 					deathStats();
 					return false;
 				}
+				levelUp();
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
@@ -245,7 +252,7 @@ public class Dungeon {
 						(Math.random()/4), 
 						(int)(Math.random()*2),
 						(int)(1+Math.random()*20),
-						(int)(1+Math.random()*20),
+						(int)(10+Math.random()*11),
 						'E'
 						);
 				Battle toughAdj = new Battle(player, miniBossAdj);
@@ -253,6 +260,7 @@ public class Dungeon {
 					deathStats();
 					return false;
 				}
+				levelUp();
 				getRoom();
 				System.out.print(room);
 				saved = false;
@@ -272,6 +280,7 @@ public class Dungeon {
 					deathStats();
 					return false;
 				}
+				levelUp();
 				c[4] = ' ';
 				refreshRoom();
 				System.out.print(room);
@@ -280,7 +289,11 @@ public class Dungeon {
 			case "loot":
 				int temp = (int)(1+Math.random()*10);
 				player.gold += temp;
-				System.out.print("You got " + temp + " gold from the chest.\n\n");
+				System.out.print("You got " + temp + " gold from the chest,\n");
+				temp = (int)(Math.random()*4);
+				int temp2 = player.getLevel()+(int)(Math.random()*3);
+				//inv.chestitemGen(temp,temp2);
+				System.out.print("and a level " + temp2 + " " + inv.printItem(temp) + ".\n");
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
@@ -516,6 +529,7 @@ public class Dungeon {
 		}
 		if (!portal) if (Math.random() < portalChance) {
 			c[4] = portalSym;
+			portal = true;
 		}
 	}
 
@@ -766,9 +780,11 @@ public class Dungeon {
 					break;
 				}
 			case "inventory":
-				System.out.print("Current health: " + player.currenthealth + "\n");
+				System.out.print("Health: " + player.currenthealth + "/" + player.maxhealth + "\n");
 				System.out.print("Gold: " + player.gold + "\n");
-				System.out.print("XP: " + player.xp + " (level " + getLevel(player.xp) + ")\n\n");
+				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n");
+				inv.showInv();
+				System.out.print("\n");
 				//manageInventory?
 				break;
 			case "details":
@@ -920,27 +936,20 @@ public class Dungeon {
 		else killed = "Damaged " + overkill + " health points past death";
 		System.out.print("\nYour stats:\n" +
 				player.gold + " gold\n" +
-				player.xp + " experience points (level " + getLevel(player.xp) + ")\n" + 
+				player.xp + " experience points (level " + player.getLevel() + ")\n" + 
 				killed
 				);
 		//inventory?
 	}
-
-	/**
-	 * Converts an xp stat into a level value.
-	 * <p>
-	 * Private method called in the {@link #deathStats()} private method.
-	 * 
-	 * @param xp - The xp value to convert.
-	 * 
-	 * @return {@code int} corresponding to the level of the item.
-	 */
-	public int getLevel(int xp) {
-		int i = 1;
-		while (true) {
-			xp -= 15 * i;
-			if (xp < 0) return i;
-			i++;
+	
+	private void levelUp() {
+		if (player.getLevel() != lastLevel) {
+			lastLevel = player.getLevel();
+			player.maxhealth += 5;
+			player.currenthealth =+ 5;
+			player.attack += 1;
+			System.out.print("> You levelled up to level " + lastLevel + "!\n"
+					+ "> Your health and attack strength have increased.\n\n");
 		}
 	}
 	
