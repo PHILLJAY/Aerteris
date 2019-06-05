@@ -15,6 +15,9 @@ public class Game {
 	private BufferedReader br;
 	private BufferedWriter bw, bwr;
 	charac player;
+	Inv inv = new Inv(8);
+	Inv[] shopInv = {new Inv(3), new Inv(3), new Inv(3)};
+	int[] hotelPrice = {0,0,0};
 
 	boolean spaceMode = false;
 	char s = ' ';
@@ -24,8 +27,8 @@ public class Game {
 	private boolean first = true;
 
 	//structures
-	private String[] structure = {"dungeon ","  shop  "," hotel  "," chest  ","end game"};
-	String[][] contentsVisual;
+	//private String[] structure = {"dungeon ","  shop  "," hotel  "," chest  ","end game"};
+	private String[][] contentsVisual;
 	private String[][] dungeon = {
 			{
 				"                  ",
@@ -152,6 +155,7 @@ public class Game {
 			} else if (startAction.equals("blank")) {
 				clearConsole();
 				player = new charac(20,3,0.2,0,0,0);
+				inv.initialize();
 				play("no","new");
 				flag = true;
 			} else if (startAction.equals("space")) {
@@ -200,6 +204,7 @@ public class Game {
 
 		clearConsole();
 		player = new charac(20,3,0.2,0,0,0);
+		inv.initialize();
 		play("no","new");
 
 	}
@@ -272,7 +277,7 @@ public class Game {
 
 		if (start.equals("dungeon")) {
 			Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
-			if (!d.enterDungeon(player)) return;
+			if (!d.enterDungeon(player, inv)) return;
 		}
 
 		while (true) {
@@ -311,38 +316,47 @@ public class Game {
 						case 0:
 							Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
 							System.out.print("You entered a dungeon!\n");
-							if (!d.enterDungeon(player)) return;
+							if (!d.enterDungeon(player, inv)) return;
 							contents[approachContent][1] = 1;
 							break;
 						case 1:
-							//shop
+							shopInv[approachContent].initialize();
+							shopInv[approachContent].showInv();
 							contents[approachContent][1] = 1;
+							printContents();
 							break;
 						case 2:
-							//hotel
+							hotel(false,approachContent);
 							contents[approachContent][1] = 1;
 							break;
 						case 3:
-							//chest
+							int temp = (int)(1+Math.random()*10);
+							player.gold += temp;
+							System.out.print("You got " + temp + " gold from the chest,\n");
+							temp = (int)(Math.random()*4);
+							int temp2 = player.getLevel()+(int)(Math.random()*3);
+							//inv.chestitemGen(temp,temp2);
+							System.out.print("and a level " + temp2 + " " + inv.printItem(temp) + ".\n\n");
 							contents[approachContent][1] = 1;
 							break;
 						case 4:
-							//end game
+							//new end game
 							contents[approachContent][1] = 1;
+							printContents();
 							break;
 						}
-						//if I was to change appearance (ie close door, open chest), now would be the time
-						printContents();
 					} else {
 						switch (contents[approachContent][0]) {
 						case 0: case 3: case 4: //dungeon, chest, end
 							System.out.print("You cannot visit this again!\n");
 							break;
 						case 1:
-							//load shop
+							shopInv[approachContent].showInv();
+							printContents();
 							break;
 						case 2:
-							//load hotel
+							hotel(true,approachContent);
+							break;
 						}
 					}
 				} else {
@@ -357,6 +371,28 @@ public class Game {
 			}
 
 		}
+	}
+	
+	private void hotel(boolean visited, int index) {
+		if (!visited) hotelPrice[index] = (int)(Math.random()*16);
+		else if (hotelPrice[index] == 0) hotelPrice[index] = 1+(int)(Math.random()*15);
+		String msg;
+		if (hotelPrice[index] == 0) msg = "This one's on the house!";
+		else msg = "It'll cost you " + hotelPrice[index] + " gold.";
+		System.out.print("Would you like to take a nap and heal?\n" + 
+		msg + " [y] [n] ");
+		String temp = in.next();
+		if (temp.contentEquals("y")) {
+			if (player.gold < hotelPrice[index]) {
+				System.out.print("You need " + (hotelPrice[index]-player.gold) + 
+						" more gold to stay here! Bye!\n\n");
+			} else {
+				player.gold -= hotelPrice[index];
+				player.currenthealth = player.maxhealth;
+				System.out.print("You're now fully healed! You payed " + hotelPrice[index] + 
+						" gold (" + player.gold + " left).\n\n");
+			}
+		} else System.out.print("Thanks for visiting! Bye!\n\n");
 	}
 
 	private void printContents() {
@@ -408,12 +444,21 @@ public class Game {
 			case "save":
 				saved = true;
 				break;
+			case "inventory":
+				System.out.print("Current health: " + player.currenthealth + "\n");
+				System.out.print("Gold: " + player.gold + "\n");
+				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n");
+				inv.showInv();
+				System.out.print("\n");
+				//manageInventory?
+				break;
 			case "list":
 				System.out.print("" +
 						"\"list\" - list all acceptable inputs" + "\n" +
 						"\"1\" - approach structure 1" + "\n" +
 						"\"2\" - approach structure 2" + "\n" +
 						"\"3\" - approach structure 3" + "\n" +
+						"\"inventory\" - access inventory" + "\n" +
 						"\"leave\" - move to new area (costs 5 gold), DOES NOT SAVE" + "\n" +
 						"\"save\" - saves progress and player stats to file" + "\n" +
 						"\"exit\" - exits game, DOES NOT SAVE" + "\n" +
