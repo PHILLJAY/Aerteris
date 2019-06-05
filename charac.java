@@ -20,8 +20,16 @@ public class charac {
 		this.gold=gold;
 		this.xp=xp;
 	}
-	
-	
+
+	public int getLevel() {
+		int xp = this.xp;
+		int i = 1;
+		while (true) {
+			xp -= 15 * i;
+			if (xp < 0) return i;
+			i++;
+		}
+	}
 	
 	public static void main(String args[]){
 //		charac player =  new charac(20,2,0);
