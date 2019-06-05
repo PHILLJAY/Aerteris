@@ -14,7 +14,7 @@ public class Debug {
 		Game g = new Game();
 	}
 	
-	public static void inventory() {
+	/*public static void inventory() {
 		Inv test =  new Inv();
 		test.place(0, 1);
 		test.place(1, 2);
@@ -22,7 +22,7 @@ public class Debug {
 		test.place(0, 2);
 		//test.showInv();
 		
-	}
+	}*/
 
 	/*public static void dungeon() { //OUTDATED, WILL NO LONGER WORK
 		int s = 8;
