@@ -28,8 +28,7 @@ public class Battle {
 						break;
 					}else {
 						System.out.println("> I'll take that thanks");
-						y.gold+=x.gold;
-						x.gold=0;
+						x.gold-=lostg;
 					}
 				}
 			} else {
@@ -59,9 +58,15 @@ public class Battle {
 			y.currenthealth=y.currenthealth+y.defense-x.attack*2;
 			System.out.println("> You CRIT "+ (x.attack*2-y.defense)+" damage to "+y.name+"!");
 			x.tempdamage=x.attack*2;
-		}else {	y.currenthealth=y.currenthealth+y.defense-x.attack;
-		System.out.println("> You deal "+ (x.attack-y.defense)+" damage to "+y.name);
-		x.tempdamage=x.attack;
+		}else {	
+			if(x.attack>y.defense) {
+				x.tempdamage=x.attack-y.defense;
+				y.currenthealth=y.currenthealth+y.defense-x.attack;
+				System.out.println("> You deal "+ (x.tempdamage)+" damage to "+y.name);
+			} else {
+				System.out.println("> you did no damage");
+				x.tempdamage=0;
+			}		
 		}
 
 	}
@@ -98,10 +103,15 @@ public class Battle {
 		}
 		else{
 			if(Math.random()<=m.crit) {
-				p.currenthealth+=p.defense-m.attack*2;
-				System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
-			}else {	p.currenthealth+=p.defense-m.attack;
-			System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
+				if(m.attack*2>p.defense) {
+					p.currenthealth+=p.defense-m.attack*2;
+					System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
+				}else System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
+			}else {	
+				if(m.attack>p.defense) {
+					p.currenthealth+=p.defense-m.attack;
+					System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
+				}else System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
 			}
 		}
 	}
