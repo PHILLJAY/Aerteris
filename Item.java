@@ -8,10 +8,11 @@ public class Item {
 	public int type;
 	public int value;
 	/*Item types;
-	 * 0 = sword
-	 * 1 = shield
-	 * 2 = can
-	 * 3 = potion
+	 * 0 = empty
+	 * 1 = sword
+	 * 2 = shield
+	 * 3 = can
+	 * 4 = potion
 	 * 
 	 */
 
@@ -29,13 +30,15 @@ public class Item {
 	public String toString() {
 		switch(this.type) {
 		case 0:
-			return  "Swood";
+			return"Empty";
 		case 1:
-			return"Shied";
+			return"Sword";
 		case 2:
-			return"can";
+			return"Shield";
 		case 3:
-			return"Potision";
+			return"Can";
+		case 4:
+			return"Potion";
 		}
 		return"bazinga";
 
@@ -91,16 +94,16 @@ public class Item {
 	
 	//randomize based on what type of item it is
 	public void  genStat(int z) {
-		if(type==0) {
+		if(type==1) {
 			setCrit((z+Math.random()*10)/100);
 			setAttack((int)Math.round(z+Math.random()*((z/4)-(-z/4)+(z/4))));
-		}else if(type==1) {
+		}else if(type==2) {
 			setDefense((int)Math.round(z/2+Math.random()*((z/4)-(-z/4)+(z/4))));
 			setHealth((int)Math.round(z+Math.random()*((z/4)-(-z/4)+(z/4))));
-		}else if(type==2) {
+		}else if(type==3) {
 			setAttack((int)Math.round(1+z/5));
 			setCrit((z+Math.random()*5)/100);
-		}else if(type==3) {
+		}else if(type==4) {
 			setHealth(z*4);
 		}
 	}
