@@ -1,15 +1,9 @@
 public class Inv {
-
-	Item[] inventory;
-	int size;
-	
-	public Inv(int size) {
-		this.size = size;
-		inventory = new Item[size];
-	}
+	static //constructor
+	Item[] inventory = new Item[8];
 
 	public void initialize() {
-		for(int z = 0; z<size;z++) {
+		for(int z = 0; z<8;z++) {
 			inventory[z] = new Item(0);
 		}
 	}
@@ -25,6 +19,35 @@ public class Inv {
 		System.out.println("INVENTORY");
 
 	}
+	public void getStats(int z) {
+		System.out.print(inventory[z].toString());
+		if(inventory[z].getType()==0||inventory[z].getType()==1) {
+			System.out.print(" ");
+		}else if(inventory[z].getType()==3) {
+			System.out.print("   ");
+		}
+		System.out.print( " | ");
+		if(inventory[z].getAttack()<10) {
+			System.out.print("0");
+		}
+		System.out.print(inventory[z].getAttack()+" | ");
+		if(inventory[z].getDefense()<10) {
+			System.out.print("0");
+		}
+		System.out.print(inventory[z].getDefense()+" | ");
+		if(inventory[z].getCrit()<0.1) {
+			System.out.print("0");
+		}
+		if(inventory[z].getCrit()<1) {
+			System.out.print("0");
+		}
+		System.out.print((int)inventory[z].getCrit()*100+" | ");
+		if(inventory[z].getHealth()<10) {
+			System.out.print(0);
+		}
+		System.out.print(inventory[z].getHealth());
+		System.out.print(" |");
+	}
 
 	public String toString(int x,  Inv z) {
 		return printItem(inventory[x].getType());
@@ -39,12 +62,25 @@ public class Inv {
 		}
 		return false;
 	}
+	/**
+	 * 
+	 * @param z - location in inv
+	 * @param x - item level
+	 */
+	public void itemGen(int z,int x) {
+		inventory[z].genStat(x);
+	}
 
-	public void chestitemGen(int z, int x) { //type, level
+	/**
+	 * Type heree
+	 * @param z - this 
+	 * @param x - that
+	 */
+	public void chestitemGen(int z, int x) {
 		// z is the type
 		//x is the level
-		int p = -1;
-		for(int i = 0; i<size ;i++) {
+		int p = 0;
+		for(int i = 0; i<8 ;i++) {
 			if(this.isEmpty(p)) {
 				p=i;
 				break;
@@ -54,11 +90,11 @@ public class Inv {
 			//code replacing thing here
 			;
 			System.out.println("Which item would you like to replace?");
-
+			
 		}
 		this.place(p, z);
 		inventory[p].genStat(x);
-
+		
 	}
 	public static String printItem(int z) {
 		switch(z) {
@@ -74,9 +110,9 @@ public class Inv {
 		return"bazinga";
 	}	
 
-	public void showInv() {
-		for(int z = 0; z<size;z++) {
-			System.out.print((z+1) + ": ");
+	public void showInv(Inv y) {
+		for(int z = 0; z<8;z++) {
+			System.out.print(this.toString(z+1, y));
 			System.out.println((inventory[z]));
 		}
 	}
