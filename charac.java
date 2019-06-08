@@ -10,6 +10,7 @@ public class charac {
 	public int mana;
 	public int tempdamage;
 	public int xp;
+	public boolean bleed;
 	
 	public charac(int maxhealth, int attack,double crit, int defense,int gold,int xp){
 		this.maxhealth = maxhealth;
@@ -20,16 +21,8 @@ public class charac {
 		this.gold=gold;
 		this.xp=xp;
 	}
-
-	public int getLevel() {
-		int xp = this.xp;
-		int i = 1;
-		while (true) {
-			xp -= 15 * i;
-			if (xp < 0) return i;
-			i++;
-		}
-	}
+	
+	
 	
 	public static void main(String args[]){
 //		charac player =  new charac(20,2,0);
