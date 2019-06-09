@@ -52,6 +52,7 @@ public class Monster extends charac {
 			break;
 		case 'B':
 			this.name="Dungeon Boss";
+			break;
 		case 'f':
 			this.name="Waterloo Admission Officer";
 		}
