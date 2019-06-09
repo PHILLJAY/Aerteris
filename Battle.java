@@ -52,17 +52,58 @@ public class Battle {
 		if(p.gold>=m.gold)return true;
 		return false;
 	}
-
+	public Battle(charac p, Monster m, char f) {
+		System.out.println("\n-------------------------------");
+		System.out.println("# Waterpoo Admission Officer Appears! \n");
+		for(int i =1; i<100; i++) {
+			if(isDead(p)==false) {
+				System.out.println("Your HP: "+p.currenthealth);
+				System.out.println(m.name+ "'s HP: "+m.currenthealth +"\n");
+				if((n=move())=='a') {
+					attack(p,m);
+				} else if(n=='b') { 
+					System.out.println("> We regret to inform you we cannot give you an offer of admission \n");
+					System.out.println("> Thanks for applying ;)");
+					System.out.println("Your gold: -15 000");
+					p.gold=-15000;					
+				}
+			} else {
+				System.out.println("Congratulations, You have been deferred to Geomatics!");
+				System.out.println("Let us show you what it means to be a Warrior!");
+				break;
+			}
+			if(isMonsterDead(m)==false) {
+				Monster.FinalBossAttack(p,m,i);
+				if(p.bleed==true) {
+					System.out.println("> You're bleeding.. -2 health \n");
+					p.currenthealth-=2;
+				}
+			}else {
+				System.out.println("> you won \n> "+m.name + " dropped " +m.gold + " gold!");
+				p.gold+=m.gold;
+				System.out.println("> you gained "+ m.xp+" xp!");
+				p.xp+=m.xp;
+				break;
+			}
+		}
+	}
 	public static void attack(charac x, Monster y){	
+		if (y.armor<0) y.armor=0;
 		if(Math.random()<=x.crit) {
-			y.currenthealth=y.currenthealth+y.defense-x.attack*2;
+			System.out.println("heckkkk"+y.armor);
+
+			y.currenthealth+=y.defense+y.armor-x.attack*2;
+			y.armor-=x.attack*2;
 			System.out.println("> You CRIT "+ (x.attack*2-y.defense)+" damage to "+y.name+"!");
 			x.tempdamage=x.attack*2;
 		}else {	
 			if(x.attack>y.defense) {
-				x.tempdamage=x.attack-y.defense;
-				y.currenthealth=y.currenthealth+y.defense-x.attack;
-				System.out.println("> You deal "+ (x.tempdamage)+" damage to "+y.name);
+				System.out.println("heckkkk"+y.armor);
+					x.tempdamage=x.attack-y.defense;
+					y.currenthealth=y.currenthealth+y.armor+y.defense-x.attack;
+					y.armor-=x.attack;
+					System.out.println("> You deal "+ (x.tempdamage)+" damage to "+y.name);
+				
 			} else {
 				System.out.println("> you did no damage");
 				x.tempdamage=0;

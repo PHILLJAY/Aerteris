@@ -7,6 +7,7 @@ public class Monster extends charac {
 	public int specialmove;
 	public static int fibonacci=0;
 	public static int charge=1;
+	public static int armor=0;
 
 	static String[] n = new String[]{
 			"skele",
@@ -51,16 +52,63 @@ public class Monster extends charac {
 			break;
 		case 'B':
 			this.name="Dungeon Boss";
+		case 'f':
+			this.name="Waterloo Admission Officer";
 		}
 		// TODO Auto-generated constructor stub
 	}
 
-
+	public static void FinalBossAttack(charac p, Monster m, int x) {
+	switch(x) {
+	case 1:
+		System.out.println("> Think you're gonna get in??");
+		System.out.println("> "+m.name+" Lures you in with Co-op and lowers your defense!\n");
+		p.defense-=2;
+		break;
+	case 2:
+		System.out.println("> "+m.name+ " is reviewing your application...");
+		System.out.println("> "+m.name+ " has gained "+10+" armor\n");
+		m.armor=10;
+		break;
+	case 3:
+		System.out.println("> A furious GOOSE ATTACKS you for "+(m.attack+3)+" damage\n");
+		p.currenthealth+=p.defense-(m.attack+3);
+		break;
+	case 4:
+		System.out.println("> Waterloo gets your hopes up with a scholarship and steals your health\n");
+		p.maxhealth-=m.attack;
+		p.currenthealth-=m.attack;
+		m.maxhealth+=m.attack;
+		m.currenthealth+=m.attack;
+		break;
+	case 5:
+		System.out.println("> Waterloo releases your Euclid Marks and deals "+(m.attack*2+2)+" damage!\n");
+		p.currenthealth+=p.defense-(m.attack*2+2);
+		break;
+	case 6:
+		System.out.println("> Waterloo Alumini flexes on you and your self-esteem lowers\n");
+		p.defense-=m.attack;
+		break;
+	case 7:
+		System.out.println("> Justin Trudeau visits the loo and steals your girlfriend and breaks your heart");
+		System.out.println("> Your heart is bleeding\n");
+		p.bleed=true;
+		break;
+	case 8:
+		System.out.println("> AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		System.out.println("> Waterloo deals "+(m.attack*2)+" damage!\n");
+		p.currenthealth+=p.defense-(m.attack*2);
+	}
+	if(x>8) {
+		Battle.BasicMonsterAttack(p, m);
+	}
+	
+}
 
 	public static void SpecialAttack(charac p,Monster m,String name) {
 		switch(name) {
 		case "skele":
-			if(m.attack*2>p.defense) {
+			if(m.attack+2>p.defense) {
 				System.out.println("> "+m.name +" uses BONE CLAW and deals " + (m.attack+2-p.defense) +" damage! \n");
 				p.currenthealth+=p.defense-(m.attack+2);
 			}else System.out.println("> "+m.name +" uses BONE CLAW and deals no damage! \n");
