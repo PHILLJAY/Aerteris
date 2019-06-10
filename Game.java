@@ -292,7 +292,9 @@ public class Game {
 			Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
 			if (!d.enterDungeon(player, inv, contents)) return;
 			skip = true;
-		} else if (start.equals("world")) skip = true;
+		} else if (start.equals("world")) {
+			skip = true;
+		}
 
 		while (true) {
 			//generate
@@ -335,7 +337,7 @@ public class Game {
 						switch (contents[approachContent][0]) {
 						case 0:
 							contents[approachContent][1] = 1;
-							Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
+							Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, "new");
 							System.out.print("You entered a dungeon!\n");
 							if (!d.enterDungeon(player, inv, contents)) return;
 							printContents();
@@ -362,7 +364,7 @@ public class Game {
 							break;
 						case 4:
 							contents[approachContent][1] = 1;
-							endGame();
+							if (endGame() > 0) return;
 							break;
 						}
 					} else {
@@ -417,7 +419,7 @@ public class Game {
 		} else System.out.print("Thanks for visiting! Bye!\n\n");
 	}
 
-	private void endGame() {
+	private int endGame() {
 		int cost = (int)(100+Math.random()*151);
 		System.out.print("Pay " + cost + " gold to fight the final boss? [y] [n] ");
 		String temp = in.next();
@@ -427,10 +429,33 @@ public class Game {
 						" more gold to fight! You are not worthy...\n\n");
 			} else {
 				player.gold -= cost;
-				Monster endgame = new Monster(player.maxhealth, player.attack, 0.2, 2, 100, 100, "Waterloo Admission Officer");
+				System.out.print("You payed " + cost + " gold (" + player.gold + " left).\n\n");
+				Monster endgame = new Monster(player.maxhealth, player.attack, 0.2, 2, 999999, 999999, "Waterloo Admission Officer");
 				Battle end = new Battle(player, endgame, 'f');
+				if (player.currenthealth <= 0) {
+					String killed;
+					int overkill = -1*player.currenthealth;
+					if (overkill == 0) killed = "Damaged just enough to die\n";
+					else if (overkill == 1) killed = "Damaged " + overkill + " health point past death";
+					else killed = "Damaged " + overkill + " health points past death";
+					System.out.print("\nYour stats:\n" +
+							player.gold + " gold\n" +
+							player.xp + " experience points (level " + player.getLevel() + ")\n" + 
+							killed
+							);
+					return 1;
+				} else {
+					System.out.print("You won!!!\n\nYour stats:\n" +
+							player.gold + " gold\n" +
+							player.xp + " experience points (level " + player.getLevel() + ")\n"
+				);
+					return 2;
+				}
 			}
-		} else System.out.print("Get outta here then!\n\n");
+		} else {
+			System.out.print("Get outta here then!\n\n");
+		}
+		return 0;
 	}
 
 	private void printContents() {
