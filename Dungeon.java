@@ -968,7 +968,7 @@ public class Dungeon {
 		if (player.getLevel() != lastLevel) {
 			lastLevel = player.getLevel();
 			player.maxhealth += 5;
-			player.currenthealth =+ 5;
+			player.currenthealth += 5;
 			player.attack += 1;
 			System.out.print("> You levelled up to level " + lastLevel + "!\n"
 					+ "> Your health and attack strength have increased.\n\n");
