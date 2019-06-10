@@ -263,7 +263,7 @@ public class Game {
 						player.currenthealth = cur;
 						//inventory here
 						String start = br.readLine();
-						if (start != "world") {
+						if (!start.equals("world")) {
 							while (!br.readLine().equals("world")) {}
 						}
 						for (int i = 0; i < 3; i++) {
@@ -480,8 +480,40 @@ public class Game {
 				System.out.print("Exiting game.");
 				return 4;
 			case "save":
-				saved = true;
-				
+				if (file != null) {
+					try {
+						bwr = new BufferedWriter(new FileWriter(file, false));
+						bwr.write("");
+						bwr.close();
+						bw = new BufferedWriter(new FileWriter(file, true));
+						bw.write("player");
+						bw.newLine();
+						bw.write("max:" + player.maxhealth);
+						bw.newLine();
+						bw.write("cur:" + player.currenthealth);
+						bw.newLine();
+						bw.write("atk:" + player.attack);
+						bw.newLine();
+						bw.write("crt:" + player.crit);
+						bw.newLine();
+						bw.write("def:" + player.defense);
+						bw.newLine();
+						bw.write("gol:" + player.gold);
+						bw.newLine();
+						bw.write("exp:" + player.xp);
+						bw.newLine();
+						bw.write("world");
+						for (int i = 0; i < 3; i++) {
+							bw.newLine();
+							bw.write(contents[i][0] + "," + contents[i][1]);
+						}
+						bw.close();
+						saved = true;
+						System.out.print("Game saved.\n\n");
+					} catch (IOException e) {
+						e.getMessage();
+					}
+				} else System.out.print("Saving disabled.\n\n");
 				break;
 			case "inventory":
 				System.out.print("Current health: " + player.currenthealth + "/" + player.maxhealth + "\n");
