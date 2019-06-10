@@ -42,7 +42,7 @@ public class Thing {
 		this.type = type;
 		name = nameBank[type];
 		if (type < 3 && type > 0) {
-			defense = (int)(1+(level/2));
+			defense = (int)(1+(level/4));
 		} else if (type == 3) {
 			heal = 4*level;
 		} else if (type == 4) {
