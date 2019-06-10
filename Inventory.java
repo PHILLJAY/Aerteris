@@ -1,7 +1,10 @@
+import java.util.Scanner;
+
 public class Inventory {
 
 	Thing[] inventory;
 	int size;
+	Scanner in = new Scanner(System.in);
 
 	public Inventory(int size) {
 		inventory = new Thing[size];
@@ -12,31 +15,104 @@ public class Inventory {
 	}
 
 	public void newItem(int level) {
+		int replace;
 		for (int i = 0; i < size; i++) {
 			if (inventory[i].name.equals("")) {
 				inventory[i].generateNew(level);
 				return;
 			}
-			//replaceItem();
+		}
+		if ((replace = replaceItem()-1) == 8) {
+			System.out.print("You did not take the item.\n\n");
+		} else {
+			System.out.print("You dropped your level " + inventory[replace].level + " " +
+					inventory[replace].name + ".\n\n");
+			inventory[replace] = new Thing();
+			inventory[replace].generateNew(level);
 		}
 	}
-	
+
 	public void newItem(int level, int type) {
+		int replace;
 		for (int i = 0; i < size; i++) {
 			if (inventory[i].name.equals("")) {
 				inventory[i].generateNew(level, type);
 				return;
 			}
-			//replaceItem();
+		}
+		if ((replace = replaceItem()-1) == 8) {
+			System.out.print("You did not take the item.\n\n");
+		} else {
+			System.out.print("You dropped your level " + inventory[replace].level + " " +
+					inventory[replace].name + ".\n\n");
+			inventory[replace] = new Thing();
+			inventory[replace].generateNew(level, type);
 		}
 	}
 
-	private void replaceItem() {
+	private int replaceItem() {
 		printInventory();
-		System.out.print("Which item do you want to replace? ");
-		//pick
+		System.out.print("Which item do you want to replace? [1-8] [n] ");
+		String temp = in.next();
+		try {
+			if (Integer.parseInt(temp) > 0 && Integer.parseInt(temp) < 9) return Integer.parseInt(temp);
+		} catch (NumberFormatException e) {}
+		return 9;
 	}
-	
+
+	public void equipMenu(charac player) {
+		System.out.print("Equip/use items? [y] [n] ");
+		String temp = in.next();
+		if (temp.equals("y")) {
+			while (true) {
+				System.out.print("Which item? [1-8] [done] ");
+				temp = in.next();
+				if (temp.equals("done")) {
+					break;
+				}
+				try {
+					if (Integer.parseInt(temp) > 0 && Integer.parseInt(temp) < 9) {
+						int use = Integer.parseInt(temp)-1;
+						if ((inventory[use].type > 0 && inventory[use].type < 3) || inventory[use].type > 4) {
+							if (inventory[use].equipped) {
+								inventory[use].equipped = false;
+								System.out.print("You unequipped your level " + inventory[use].level + " " + inventory[use].name + ".\n\n");
+							} else {
+								int check = inventory[use].type;
+								for (int i = 0; i < size; i++) {
+									if (use != i) {
+										if (check == inventory[i].type && inventory[i].equipped) {
+											inventory[i].equipped = false;
+											System.out.print("You unequipped your level " + inventory[i].level + " " + inventory[i].name + ".\n");
+										} else if (check > 4 && inventory[i].type > 4 && inventory[i].equipped) {
+											inventory[i].equipped = false;
+											System.out.print("You unequipped your level " + inventory[i].level + " " + inventory[i].name + ".\n");
+										}
+									}
+								}
+								inventory[use].equipped = true;
+								System.out.print("You equipped your level " + inventory[use].level + " " + inventory[use].name + ".\n\n");
+							}
+						} else if (inventory[use].type == 3) {
+							if (player.maxhealth-player.currenthealth < inventory[use].heal) {
+								player.currenthealth = player.maxhealth;
+								System.out.print("You drank the potion and regained all your health!\n(" +
+										player.currenthealth + "/" + player.maxhealth + ")\n\n");
+							} else {
+								player.currenthealth += inventory[use].heal;
+								System.out.print("You drank the potion and regained " + inventory[use].heal + 
+										" of your health.\n(" + player.currenthealth + "/" + player.maxhealth + ")\n\n");
+							}
+							inventory[use] = new Thing();
+						} else if (inventory[use].type == 4) System.out.print("\n");
+					}
+				} catch (NumberFormatException e) {}
+				printInventory();
+			}
+			System.out.print("\n");
+		}
+	}
+
 	public void fill(int level) {
 		for (int i = 0; i < size; i++) {
 			inventory[i].generateNew((int)(level-1 + Math.random()*3));
@@ -66,7 +142,7 @@ public class Inventory {
 		if (inventory[index].equipped) return ", equipped\n";
 		return "\n";
 	}
-	
+
 	public String typeToString(int type) {
 		Thing temp = new Thing();
 		return temp.nameBank[type];
@@ -96,20 +172,20 @@ public class Inventory {
 			}
 		}
 	}
-	
+
 	public void addBuffs(charac player) {
 		for (int i = 0; i < size; i++) {
-			if (inventory[i].type > 0 && inventory[i].type < 3) player.defense += inventory[i].defense;
-			else if (inventory[i].type > 4) player.attack += inventory[i].damage;
+			if (inventory[i].type > 0 && inventory[i].type < 3 && inventory[i].equipped) player.defense += inventory[i].defense;
+			else if (inventory[i].type > 4 && inventory[i].equipped) player.attack += inventory[i].damage;
 		}
 	}
-	
+
 	public void removeBuffs(charac player) {
 		for (int i = 0; i < size; i++) {
-			if (inventory[i].type > 0 && inventory[i].type < 3) {
+			if (inventory[i].type > 0 && inventory[i].type < 3 && inventory[i].equipped) {
 				player.defense -= inventory[i].defense;
 			}
-			else if (inventory[i].type > 4) {
+			else if (inventory[i].type > 4 && inventory[i].equipped) {
 				player.attack -= inventory[i].damage;
 			}
 		}
