@@ -15,8 +15,8 @@ public class Game {
 	private BufferedReader br;
 	private BufferedWriter bw, bwr;
 	charac player;
-	Inv inv = new Inv(8);
-	Inv[] shopInv = {new Inv(3), new Inv(3), new Inv(3)};
+	Inv inv = new Inv();
+	//Inv[] shopInv = {new Inv(3), new Inv(3), new Inv(3)};
 	int[] hotelPrice = {0,0,0};
 
 	boolean spaceMode = false;
@@ -29,6 +29,7 @@ public class Game {
 	//structures
 	//private String[] structure = {"dungeon ","  shop  "," hotel  "," chest  ","end game"};
 	private String[][] contentsVisual;
+	private int[][] contents = new int[3][2];
 	private String[][] dungeon = {
 			{
 				"                  ",
@@ -155,7 +156,8 @@ public class Game {
 			} else if (startAction.equals("blank")) {
 				clearConsole();
 				player = new charac(20,3,0.2,0,0,0);
-				inv.initialize();
+				//inv.initialize();
+				file = null;
 				play("no","new");
 				flag = true;
 			} else if (startAction.equals("space")) {
@@ -204,7 +206,7 @@ public class Game {
 
 		clearConsole();
 		player = new charac(20,3,0.2,0,0,0);
-		inv.initialize();
+		//inv.initialize();
 		play("no","new");
 
 	}
@@ -259,7 +261,16 @@ public class Game {
 						int exp = Integer.parseInt(br.readLine().substring(4));
 						player = new charac(max,atk,crt,def,gol,exp);
 						player.currenthealth = cur;
+						//inventory here
 						String start = br.readLine();
+						if (start != "world") {
+							while (!br.readLine().equals("world")) {}
+						}
+						for (int i = 0; i < 3; i++) {
+							temp = br.readLine();
+							contents[i][0] = Integer.parseInt(temp.substring(0,1));
+							contents[i][1] = Integer.parseInt(temp.substring(2));
+						}
 						br.close();
 						clearConsole();
 						play(start, "load");
@@ -275,17 +286,24 @@ public class Game {
 
 	private void play(String start, String init) { 
 
+		boolean skip = false;
+
 		if (start.equals("dungeon")) {
 			Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
-			if (!d.enterDungeon(player, inv)) return;
-		}
+			if (!d.enterDungeon(player, inv, contents)) return;
+			skip = true;
+		} else if (start.equals("world")) skip = true;
 
 		while (true) {
 			//generate
-			int[][] contents = {{(int)(Math.floor(Math.random()*5)),0},
-					{(int)(Math.floor(Math.random()*5)),0},{(int)(Math.floor(Math.random()*5)),0}};
-			if (first) contents[1][0] = 0; //guaranteed first-time dungeon
+			if (!skip) {
+				int [][] contentsNew = {{(int)(Math.floor(Math.random()*5)),0},
+						{(int)(Math.floor(Math.random()*5)),0},{(int)(Math.floor(Math.random()*5)),0}};
+				contents = contentsNew;
+				if (first) contents[1][0] = 0; //guaranteed first-time dungeon
+			}
 			first = false;
+			skip = false;
 			//build
 			contentsVisual = new String[3][6];
 			for (int i = 0; i < 3; i++) {
@@ -309,27 +327,31 @@ public class Game {
 			printContents();
 			//act
 			while (true) {
-				int approachContent = inputApproach();
+				int approachContent;
+				if (checkEnd(contents)) approachContent = 5;
+				else approachContent = inputApproach();
 				if (approachContent < 3) {
 					if (contents[approachContent][1] == 0) {
 						switch (contents[approachContent][0]) {
 						case 0:
+							contents[approachContent][1] = 1;
 							Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
 							System.out.print("You entered a dungeon!\n");
-							if (!d.enterDungeon(player, inv)) return;
-							contents[approachContent][1] = 1;
+							if (!d.enterDungeon(player, inv, contents)) return;
+							printContents();
 							break;
 						case 1:
-							shopInv[approachContent].initialize();
-							shopInv[approachContent].showInv();
 							contents[approachContent][1] = 1;
+							//shopInv[approachContent].initialize();
+							//shopInv[approachContent].showInv();
 							printContents();
 							break;
 						case 2:
-							hotel(false,approachContent);
 							contents[approachContent][1] = 1;
+							hotel(false,approachContent);
 							break;
 						case 3:
+							contents[approachContent][1] = 1;
 							int temp = (int)(1+Math.random()*10);
 							player.gold += temp;
 							System.out.print("You got " + temp + " gold from the chest,\n");
@@ -337,12 +359,10 @@ public class Game {
 							int temp2 = player.getLevel()+(int)(Math.random()*3);
 							//inv.chestitemGen(temp,temp2);
 							System.out.print("and a level " + temp2 + " " + inv.printItem(temp) + ".\n\n");
-							contents[approachContent][1] = 1;
 							break;
 						case 4:
-							//new end game
 							contents[approachContent][1] = 1;
-							printContents();
+							endGame();
 							break;
 						}
 					} else {
@@ -351,7 +371,7 @@ public class Game {
 							System.out.print("You cannot visit this again!\n");
 							break;
 						case 1:
-							shopInv[approachContent].showInv();
+							//shopInv[approachContent].showInv();
 							printContents();
 							break;
 						case 2:
@@ -361,6 +381,8 @@ public class Game {
 					}
 				} else {
 					switch (approachContent) {
+					case 5:
+						System.out.print("You do not have nor can get enough money to continue!\nYou lose!");
 					case 4:
 						return;
 					case 3:
@@ -372,7 +394,7 @@ public class Game {
 
 		}
 	}
-	
+
 	private void hotel(boolean visited, int index) {
 		if (!visited) hotelPrice[index] = (int)(Math.random()*16);
 		else if (hotelPrice[index] == 0) hotelPrice[index] = 1+(int)(Math.random()*15);
@@ -380,7 +402,7 @@ public class Game {
 		if (hotelPrice[index] == 0) msg = "This one's on the house!";
 		else msg = "It'll cost you " + hotelPrice[index] + " gold.";
 		System.out.print("Would you like to take a nap and heal?\n" + 
-		msg + " [y] [n] ");
+				msg + " [y] [n] ");
 		String temp = in.next();
 		if (temp.contentEquals("y")) {
 			if (player.gold < hotelPrice[index]) {
@@ -393,6 +415,22 @@ public class Game {
 						" gold (" + player.gold + " left).\n\n");
 			}
 		} else System.out.print("Thanks for visiting! Bye!\n\n");
+	}
+
+	private void endGame() {
+		int cost = (int)(100+Math.random()*151);
+		System.out.print("Pay " + cost + " gold to fight the final boss? [y] [n] ");
+		String temp = in.next();
+		if (temp.contentEquals("y")) {
+			if (player.gold < cost) {
+				System.out.print("You need " + (cost-player.gold) + 
+						" more gold to fight! You are not worthy...\n\n");
+			} else {
+				player.gold -= cost;
+				Monster endgame = new Monster(player.maxhealth, player.attack, 0.2, 2, 100, 100, "Waterloo Admission Officer");
+				Battle end = new Battle(player, endgame, 'f');
+			}
+		} else System.out.print("Get outta here then!\n\n");
 	}
 
 	private void printContents() {
@@ -425,7 +463,7 @@ public class Game {
 				if (player.gold >= 5) {
 					player.gold -= 5;
 					System.out.print("Moving to new area, you payed 5 gold (" + 
-					player.gold + " left).\n\n");
+							player.gold + " left).\n\n");
 					saved = false;
 					return 3;
 				}
@@ -443,12 +481,13 @@ public class Game {
 				return 4;
 			case "save":
 				saved = true;
+				
 				break;
 			case "inventory":
-				System.out.print("Current health: " + player.currenthealth + "\n");
+				System.out.print("Current health: " + player.currenthealth + "/" + player.maxhealth + "\n");
 				System.out.print("Gold: " + player.gold + "\n");
 				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n");
-				inv.showInv();
+				//inv.showInv();
 				System.out.print("\n");
 				//manageInventory?
 				break;
@@ -468,6 +507,12 @@ public class Game {
 			}
 		}
 	}
+
+	private boolean checkEnd(int[][] approached) {
+		if (approached[0][1] == 1 && approached[1][1] == 1 && approached[2][1] == 1 && player.gold < 5) return true;
+		else return false;
+	}
+
 	private void clearConsole() {
 		System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 	}
