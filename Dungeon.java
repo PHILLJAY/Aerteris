@@ -125,7 +125,7 @@ public class Dungeon {
 	 * 
 	 * @see {@link #getRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public boolean enterDungeon(charac player, Inv inv) {
+	public boolean enterDungeon(charac player, Inv inv, int[][] contents) {
 		this.player = player;
 		this.inv = inv;
 		lastLevel = player.getLevel();
@@ -368,6 +368,12 @@ public class Dungeon {
 								}
 							}
 						}
+						bw.newLine();
+						bw.write("world");
+						for (int i = 0; i < 3; i++) {
+							bw.newLine();
+							bw.write(contents[i][0] + "," + contents[i][1]);
+						}
 						bw.close();
 						saved = true;
 						System.out.print("Game saved.\n\n");
@@ -377,12 +383,14 @@ public class Dungeon {
 				} else System.out.print("Saving disabled.\n\n");
 				break;
 			case "exit":
-				if (!saved) {
-					System.out.print("Are you sure you want to exit without saving? [y] [n] ");
-					check = input.next();
-					if (!check.equals("y")) {
-						System.out.print("Returning to game...\n\n");
-						break;
+				if (file != null) {
+					if (!saved) {
+						System.out.print("Are you sure you want to exit without saving? [y] [n] ");
+						check = input.next();
+						if (!check.equals("y")) {
+							System.out.print("Returning to game...\n\n");
+							break;
+						}
 					}
 				}
 				System.out.print("Exiting game.");
@@ -783,7 +791,7 @@ public class Dungeon {
 				System.out.print("Health: " + player.currenthealth + "/" + player.maxhealth + "\n");
 				System.out.print("Gold: " + player.gold + "\n");
 				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n");
-				inv.showInv();
+				//inv.showInv();
 				System.out.print("\n");
 				//manageInventory?
 				break;
@@ -920,7 +928,7 @@ public class Dungeon {
 	private void resetContents() {
 		c = new char[]{' ',' ',' ',' ',' '};
 	}
-	
+
 	/**
 	 * Prints stats out that the player might want to see to track score upon death.
 	 * <p>
@@ -941,7 +949,12 @@ public class Dungeon {
 				);
 		//inventory?
 	}
-	
+
+	/**
+	 * Will check if player has levelled up and modify stats accordingly.
+	 * <p>
+	 * Private method called in the {@link #enterDungeon(charac, Inv)} public method.
+	 */
 	private void levelUp() {
 		if (player.getLevel() != lastLevel) {
 			lastLevel = player.getLevel();
@@ -952,7 +965,7 @@ public class Dungeon {
 					+ "> Your health and attack strength have increased.\n\n");
 		}
 	}
-	
+
 	/**
 	 * Lists all valid inputs for {@link #takeInput()}.
 	 * <p>
