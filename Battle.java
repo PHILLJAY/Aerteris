@@ -28,7 +28,7 @@ public class Battle {
 						break;
 					}else {
 						System.out.println("> I'll take that thanks");
-						x.gold-=lostg;
+						x.gold-=0;
 					}
 				}
 			} else {
