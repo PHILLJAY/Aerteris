@@ -45,7 +45,7 @@ public class Dungeon {
 	//saving
 	File file;
 	charac player;
-	Inv inv;
+	Inventory inventory;
 	BufferedReader br;
 	BufferedWriter bw, bwr;
 	private boolean saved = true;
@@ -125,9 +125,9 @@ public class Dungeon {
 	 * 
 	 * @see {@link #getRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public boolean enterDungeon(charac player, Inv inv, int[][] contents) {
+	public boolean enterDungeon(charac player, Inventory inventory, int[][] contents) {
 		this.player = player;
-		this.inv = inv;
+		this.inventory = inventory;
 		lastLevel = player.getLevel();
 		do {
 			switch (action) {
@@ -195,7 +195,9 @@ public class Dungeon {
 						(int)(1+Math.random()*10),
 						'e'
 						);
+				inventory.addBuffs(player);
 				Battle normal = new Battle(player, monster);
+				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();
 					return false;
@@ -215,7 +217,9 @@ public class Dungeon {
 						(int)(1+Math.random()*10),
 						'e'
 						);
+				inventory.addBuffs(player);
 				Battle normalAdj = new Battle(player, monsterAdj);
+				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();					
 					return false;
@@ -235,7 +239,9 @@ public class Dungeon {
 						(int)(10+Math.random()*11),
 						'E'
 						);
+				inventory.addBuffs(player);
 				Battle tough = new Battle(player, miniBoss);
+				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();
 					return false;
@@ -255,7 +261,9 @@ public class Dungeon {
 						(int)(10+Math.random()*11),
 						'E'
 						);
+				inventory.addBuffs(player);
 				Battle toughAdj = new Battle(player, miniBossAdj);
+				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();
 					return false;
@@ -275,7 +283,9 @@ public class Dungeon {
 						(int)(30+Math.random()*21), //30-50
 						'B'
 						);
+				inventory.addBuffs(player);
 				Battle boss = new Battle(player, dungeonBoss);
+				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();
 					return false;
@@ -290,10 +300,10 @@ public class Dungeon {
 				int temp = (int)(1+Math.random()*10);
 				player.gold += temp;
 				System.out.print("You got " + temp + " gold from the chest,\n");
-				temp = (int)(Math.random()*4);
+				temp = (int)(1+Math.random()*6);
 				int temp2 = player.getLevel()+(int)(Math.random()*3);
-				//inv.chestitemGen(temp,temp2);
-				System.out.print("and a level " + temp2 + " " + inv.printItem(temp) + ".\n");
+				inventory.newItem(temp2, temp);
+				System.out.print("and a level " + temp2 + " " + inventory.typeToString(temp) + ".\n");
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
@@ -790,9 +800,8 @@ public class Dungeon {
 			case "inventory":
 				System.out.print("Health: " + player.currenthealth + "/" + player.maxhealth + "\n");
 				System.out.print("Gold: " + player.gold + "\n");
-				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n");
-				//inv.showInv();
-				System.out.print("\n");
+				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n\n");
+				inventory.printInventory();
 				//manageInventory?
 				break;
 			case "details":

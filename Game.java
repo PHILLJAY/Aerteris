@@ -15,8 +15,8 @@ public class Game {
 	private BufferedReader br;
 	private BufferedWriter bw, bwr;
 	charac player;
-	Inv inv = new Inv();
-	//Inv[] shopInv = {new Inv(3), new Inv(3), new Inv(3)};
+	Inventory inventory = new Inventory(8);
+	Inventory[] shopInv = {new Inventory(3), new Inventory(3), new Inventory(3)};
 	int[] hotelPrice = {0,0,0};
 
 	boolean spaceMode = false;
@@ -156,7 +156,6 @@ public class Game {
 			} else if (startAction.equals("blank")) {
 				clearConsole();
 				player = new charac(20,3,0.2,0,0,0);
-				//inv.initialize();
 				file = null;
 				play("no","new");
 				flag = true;
@@ -206,7 +205,6 @@ public class Game {
 
 		clearConsole();
 		player = new charac(20,3,0.2,0,0,0);
-		//inv.initialize();
 		play("no","new");
 
 	}
@@ -290,7 +288,7 @@ public class Game {
 
 		if (start.equals("dungeon")) {
 			Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
-			if (!d.enterDungeon(player, inv, contents)) return;
+			if (!d.enterDungeon(player, inventory, contents)) return;
 			skip = true;
 		} else if (start.equals("world")) {
 			skip = true;
@@ -339,13 +337,13 @@ public class Game {
 							contents[approachContent][1] = 1;
 							Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, "new");
 							System.out.print("You entered a dungeon!\n");
-							if (!d.enterDungeon(player, inv, contents)) return;
+							if (!d.enterDungeon(player, inventory, contents)) return;
 							printContents();
 							break;
 						case 1:
 							contents[approachContent][1] = 1;
-							//shopInv[approachContent].initialize();
-							//shopInv[approachContent].showInv();
+							shopInv[approachContent].fill(player.getLevel());
+							shopInv[approachContent].printInventory();
 							printContents();
 							break;
 						case 2:
@@ -357,10 +355,10 @@ public class Game {
 							int temp = (int)(1+Math.random()*10);
 							player.gold += temp;
 							System.out.print("You got " + temp + " gold from the chest,\n");
-							temp = (int)(Math.random()*4);
+							temp = (int)(1+Math.random()*6);
 							int temp2 = player.getLevel()+(int)(Math.random()*3);
-							//inv.chestitemGen(temp,temp2);
-							System.out.print("and a level " + temp2 + " " + inv.printItem(temp) + ".\n\n");
+							inventory.newItem(temp2, temp);
+							System.out.print("and a level " + temp2 + " " + inventory.typeToString(temp) + ".\n\n");
 							break;
 						case 4:
 							contents[approachContent][1] = 1;
@@ -373,7 +371,7 @@ public class Game {
 							System.out.print("You cannot visit this again!\n");
 							break;
 						case 1:
-							//shopInv[approachContent].showInv();
+							shopInv[approachContent].printInventory();
 							printContents();
 							break;
 						case 2:
@@ -397,7 +395,7 @@ public class Game {
 		}
 	}
 
-	private void hotel(boolean visited, int index) {
+	private void hotel (boolean visited, int index) {
 		if (!visited) hotelPrice[index] = (int)(Math.random()*16);
 		else if (hotelPrice[index] == 0) hotelPrice[index] = 1+(int)(Math.random()*15);
 		String msg;
@@ -431,7 +429,9 @@ public class Game {
 				player.gold -= cost;
 				System.out.print("You payed " + cost + " gold (" + player.gold + " left).\n\n");
 				Monster endgame = new Monster(player.maxhealth, player.attack, 0.2, 2, 999999, 999999, "Waterloo Admission Officer");
+				inventory.addBuffs(player);
 				Battle end = new Battle(player, endgame, 'f');
+				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					String killed;
 					int overkill = -1*player.currenthealth;
@@ -448,7 +448,7 @@ public class Game {
 					System.out.print("You won!!!\n\nYour stats:\n" +
 							player.gold + " gold\n" +
 							player.xp + " experience points (level " + player.getLevel() + ")\n"
-				);
+							);
 					return 2;
 				}
 			}
@@ -466,7 +466,7 @@ public class Game {
 				" " + contentsVisual[0][3] + " " + contentsVisual[1][3] + " " + contentsVisual[2][3] + "\n" +
 				" " + contentsVisual[0][4] + " " + contentsVisual[1][4] + " " + contentsVisual[2][4] + "\n" +
 				" " + contentsVisual[0][5] + " " + contentsVisual[1][5] + " " + contentsVisual[2][5] + "\n\n" +
-				"_________[1]________________[2]________________[3]__________\n"
+				"_________[1]________________[2]________________[3]__________\n\n"
 				);
 	}
 
@@ -495,11 +495,13 @@ public class Game {
 				else System.out.print("You need " + (5-player.gold) + " more gold to do that!\n");
 				break;
 			case "exit":
-				if (!saved) {
-					System.out.print("Are you sure you want to exit without saving? [y] [n] ");
-					if (!in.next().equals("y")) {
-						System.out.print("Returning to game...\n\n");
-						break;
+				if (file != null) {
+					if (!saved) {
+						System.out.print("Are you sure you want to exit without saving? [y] [n] ");
+						if (!in.next().equals("y")) {
+							System.out.print("Returning to game...\n\n");
+							break;
+						}
 					}
 				}
 				System.out.print("Exiting game.");
@@ -543,9 +545,8 @@ public class Game {
 			case "inventory":
 				System.out.print("Current health: " + player.currenthealth + "/" + player.maxhealth + "\n");
 				System.out.print("Gold: " + player.gold + "\n");
-				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n");
-				//inv.showInv();
-				System.out.print("\n");
+				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n\n");
+				inventory.printInventory();
 				//manageInventory?
 				break;
 			case "list":
