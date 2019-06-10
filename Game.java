@@ -562,7 +562,6 @@ public class Game {
 						"\"exit\" - exits game, DOES NOT SAVE" + "\n" +
 						"\n"
 						);
-
 			}
 		}
 	}

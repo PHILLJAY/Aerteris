@@ -957,7 +957,6 @@ public class Dungeon {
 				player.xp + " experience points (level " + player.getLevel() + ")\n" + 
 				killed
 				);
-		//inventory?
 	}
 
 	/**
