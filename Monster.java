@@ -52,7 +52,6 @@ public class Monster extends charac {
 			break;
 		case 'B':
 			this.name="Dungeon Boss";
-			break;
 		case 'f':
 			this.name="Waterloo Admission Officer";
 		}
@@ -70,8 +69,7 @@ public class Monster extends charac {
 		System.out.println("> "+m.name+ " is reviewing your application...");
 		System.out.println("> "+m.name+ " has gained "+10+" armor\n");
 		m.armor=10;
-		break;
-	case 3:
+		break;	case 3:
 		System.out.println("> A furious GOOSE ATTACKS you for "+(m.attack+3)+" damage\n");
 		p.currenthealth+=p.defense-(m.attack+3);
 		break;
@@ -144,8 +142,8 @@ public class Monster extends charac {
 			m.charge+=1;
 			break;
 		case "Copy Cat":
-			System.out.println("> "+m.name+" COPIES your attack and deals "+(p.tempdamage)+" damage" );
-			p.currenthealth-=p.tempdamage+p.defense;
+			System.out.println("> "+m.name+" COPIES your attack and deals "+(p.tempdamage)+" damage\n" );
+			p.currenthealth+=p.defense-p.tempdamage;
 			break;
 		case "Executioner":
 			if((((p.maxhealth-p.currenthealth)/2)-p.defense)>0) {
@@ -160,8 +158,8 @@ public class Monster extends charac {
 			break;
 		case "Joker":
 			if(p.defense>m.attack*2) { System.out.println(m.name+" did no damage lol");}
-			else System.out.println("> "+m.name+ " BACKSTABS you for "+ (m.attack*2-p.defense));
-			p.currenthealth-=m.attack*2+p.defense;
+			else System.out.println("> "+m.name+ " BACKSTABS you for "+ (m.attack*2));
+			p.currenthealth+=p.defense-(m.attack*2);
 			break;
 		case "Master of Coins":
 			int stealgold=m.attack*2+m.gold/4;
