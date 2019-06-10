@@ -7,7 +7,7 @@ public class Battle {
 	public static Scanner scan = new Scanner(System.in);
 	private char n;
 
-	public Battle(charac x,Monster y ) {
+	public Battle(charac x,Monster y, Inventory inventory) {
 		System.out.println("\n-------------------------------");
 		System.out.println("# "+y.name+" Appears! # \n");
 		if(y.name.equals("Dungeon Boss")) y.PrintBoos();
@@ -52,7 +52,7 @@ public class Battle {
 		if(p.gold>=m.gold)return true;
 		return false;
 	}
-	public Battle(charac p, Monster m, char f) {
+	public Battle(charac p, Monster m, Inventory inventory, char f) {
 		System.out.println("\n-------------------------------");
 		System.out.println("# Waterpoo Adimission Officer Appears! \n");
 		for(int i =1; i<100; i++) {

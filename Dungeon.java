@@ -196,7 +196,7 @@ public class Dungeon {
 						'e'
 						);
 				inventory.addBuffs(player);
-				Battle normal = new Battle(player, monster);
+				Battle normal = new Battle(player, monster, inventory);
 				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();
@@ -218,7 +218,7 @@ public class Dungeon {
 						'e'
 						);
 				inventory.addBuffs(player);
-				Battle normalAdj = new Battle(player, monsterAdj);
+				Battle normalAdj = new Battle(player, monsterAdj, inventory);
 				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();					
@@ -240,7 +240,7 @@ public class Dungeon {
 						'E'
 						);
 				inventory.addBuffs(player);
-				Battle tough = new Battle(player, miniBoss);
+				Battle tough = new Battle(player, miniBoss, inventory);
 				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();
@@ -262,7 +262,7 @@ public class Dungeon {
 						'E'
 						);
 				inventory.addBuffs(player);
-				Battle toughAdj = new Battle(player, miniBossAdj);
+				Battle toughAdj = new Battle(player, miniBossAdj, inventory);
 				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();
@@ -284,7 +284,7 @@ public class Dungeon {
 						'B'
 						);
 				inventory.addBuffs(player);
-				Battle boss = new Battle(player, dungeonBoss);
+				Battle boss = new Battle(player, dungeonBoss, inventory);
 				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					deathStats();
