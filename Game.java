@@ -357,8 +357,8 @@ public class Game {
 							System.out.print("You got " + temp + " gold from the chest,\n");
 							temp = (int)(1+Math.random()*6);
 							int temp2 = player.getLevel()+(int)(Math.random()*3);
-							inventory.newItem(temp2, temp);
 							System.out.print("and a level " + temp2 + " " + inventory.typeToString(temp) + ".\n\n");
+							inventory.newItem(temp2, temp);
 							break;
 						case 4:
 							contents[approachContent][1] = 1;
@@ -547,7 +547,8 @@ public class Game {
 				System.out.print("Gold: " + player.gold + "\n");
 				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n\n");
 				inventory.printInventory();
-				//manageInventory?
+				inventory.equipMenu(player);
+				printContents();
 				break;
 			case "list":
 				System.out.print("" +

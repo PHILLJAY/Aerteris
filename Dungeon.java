@@ -302,8 +302,8 @@ public class Dungeon {
 				System.out.print("You got " + temp + " gold from the chest,\n");
 				temp = (int)(1+Math.random()*6);
 				int temp2 = player.getLevel()+(int)(Math.random()*3);
-				inventory.newItem(temp2, temp);
 				System.out.print("and a level " + temp2 + " " + inventory.typeToString(temp) + ".\n");
+				inventory.newItem(temp2, temp);
 				refreshRoom();
 				System.out.print(room);
 				saved = false;
@@ -802,7 +802,8 @@ public class Dungeon {
 				System.out.print("Gold: " + player.gold + "\n");
 				System.out.print("XP: " + player.xp + " (level " + player.getLevel() + ")\n\n");
 				inventory.printInventory();
-				//manageInventory?
+				inventory.equipMenu(player);
+				System.out.print(room);
 				break;
 			case "details":
 				System.out.print("Dungeon status: ");
