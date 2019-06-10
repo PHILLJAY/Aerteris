@@ -28,7 +28,7 @@ public class Battle {
 						break;
 					}else {
 						System.out.println("> I'll take that thanks");
-						x.gold-=0;
+						x.gold-=lostg;
 					}
 				}
 			} else {
@@ -54,7 +54,7 @@ public class Battle {
 	}
 	public Battle(charac p, Monster m, char f) {
 		System.out.println("\n-------------------------------");
-		System.out.println("# Waterpoo Admission Officer Appears! \n");
+		System.out.println("# Waterpoo Adimission Officer Appears! \n");
 		for(int i =1; i<100; i++) {
 			if(isDead(p)==false) {
 				System.out.println("Your HP: "+p.currenthealth);
@@ -90,15 +90,15 @@ public class Battle {
 	public static void attack(charac x, Monster y){	
 		if (y.armor<0) y.armor=0;
 		if(Math.random()<=x.crit) {
-			System.out.println("heckkkk"+y.armor);
-
+			System.out.println(x.defense);
+			
 			y.currenthealth+=y.defense+y.armor-x.attack*2;
 			y.armor-=x.attack*2;
 			System.out.println("> You CRIT "+ (x.attack*2-y.defense)+" damage to "+y.name+"!");
 			x.tempdamage=x.attack*2;
 		}else {	
 			if(x.attack>y.defense) {
-				System.out.println("heckkkk"+y.armor);
+				System.out.println(x.defense);
 					x.tempdamage=x.attack-y.defense;
 					y.currenthealth=y.currenthealth+y.armor+y.defense-x.attack;
 					y.armor-=x.attack;
@@ -146,13 +146,13 @@ public class Battle {
 			if(Math.random()<=m.crit) {
 				if(m.attack*2>p.defense) {
 					p.currenthealth+=p.defense-m.attack*2;
-					System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
-				}else System.out.println("> "+m.name +" CRITS " + (m.attack*2-p.defense) +" damage \n");
+					System.out.println("> "+m.name +" CRITS " + (m.attack*2) +" damage \n");
+				}else System.out.println("> "+m.name +" CRITS " + (m.attack*2) +" damage \n");
 			}else {	
 				if(m.attack>p.defense) {
 					p.currenthealth+=p.defense-m.attack;
-					System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
-				}else System.out.println("> "+m.name +" deals " + (m.attack-p.defense) +" damage \n");
+					System.out.println("> "+m.name +" deals " + (m.attack) +" damage \n");
+				}else System.out.println("> "+m.name +" deals " + (m.attack) +" damage \n");
 			}
 		}
 	}
