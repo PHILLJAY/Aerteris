@@ -138,6 +138,34 @@ public class Inventory {
 		} else System.out.print("You have no items.\n\n");
 	}
 
+	public boolean printConsumables() {
+		if (countItems() > 0) {
+			int count = 0;
+			sort();
+			for (int i = 0; i < countItems(); i++) {
+				if (inventory[i].type == 3 || inventory[i].type == 4) {
+					count++;
+					System.out.print((i+1) + " -> " + inventory[i].name + " level " + inventory[i].level + ": +");
+					if (inventory[i].type == 3) {
+						System.out.print(inventory[i].heal + " instant health\n");
+					} else {
+						System.out.print(inventory[i].explode + " instant damage\n");
+					}
+				}
+			}
+			if (count > 0) {
+				System.out.print("\n");
+				return true;
+			} else {
+				System.out.print("You have no items to use in battle.\n\n");
+				return false;
+			}
+		} else {
+			System.out.print("You have no items.\n\n");
+			return false;
+		}
+	}
+
 	private String equippedToString(int index) {
 		if (inventory[index].equipped) return ", equipped\n";
 		return "\n";
@@ -189,6 +217,14 @@ public class Inventory {
 				player.attack -= inventory[i].damage;
 			}
 		}
+	}
+
+	public int[] getStat(int index) {
+		if (inventory[index].type == 3) {
+			return new int[] {3,inventory[index].heal};
+		} else if (inventory[index].type == 4) {
+			return new int[] {4,inventory[index].explode};
+		} else return new int[] {0,0};
 	}
 
 }
