@@ -7,7 +7,7 @@ public class Battle {
 	public static Scanner scan = new Scanner(System.in);
 	private char n;
 
-	public Battle(charac x,Monster y ) {
+	public Battle(charac x,Monster y, Inventory inventory) {
 		System.out.println("\n-------------------------------");
 		System.out.println("# "+y.name+" Appears! # \n");
 		if(y.name.equals("Dungeon Boss")) y.PrintBoos();
@@ -19,7 +19,7 @@ public class Battle {
 				else System.out.println(y.name+ "'s HP: ?? \n");
 				if((n=move())=='a') {
 					attack(x,y);
-				} else if(n=='b') { 
+				} else if(n=='b') {
 					if(Bribe(x,y)) {
 						System.out.println("> You threw " +lostg+" on the ground and ran away");
 						x.gold-=lostg;
@@ -29,6 +29,20 @@ public class Battle {
 					}else {
 						System.out.println("> I'll take that thanks");
 						x.gold=0;
+					}
+				} else if (n == 'i') {
+					if (inventory.printConsumables()) { //shows consumables and corresponding index in inventory (false if none exist)
+						//prompt user for number 1-8 -> index in inventory
+						int[] action = inventory.getStat(/*that prompt, this is temporary ->*/1);
+						if (action[0] == 3) {
+							//heal the amount in "action[1]"
+						} else if (action[0] == 4) {
+							//damage enemy the amount in "action[1]"
+						} else {
+							//wrong number given as prompt, retry?
+						}
+					} else {
+						//return to normal attack selection? will skip turn otherwise I think
 					}
 				}
 			} else {
@@ -52,7 +66,7 @@ public class Battle {
 		if(p.gold>=m.gold)return true;
 		return false;
 	}
-	public Battle(charac p, Monster m, char f) {
+	public Battle(charac p, Monster m, Inventory inventory, char f) {
 		System.out.println("\n-------------------------------");
 		System.out.println("# Waterpoo Adimission Officer Appears! \n");
 		for(int i =1; i<100; i++) {

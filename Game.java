@@ -430,7 +430,7 @@ public class Game {
 				System.out.print("You payed " + cost + " gold (" + player.gold + " left).\n\n");
 				Monster endgame = new Monster(player.maxhealth, player.attack, 0.2, 2, 999999, 999999, "Waterloo Admission Officer");
 				inventory.addBuffs(player);
-				Battle end = new Battle(player, endgame, 'f');
+				Battle end = new Battle(player, endgame, inventory, 'f');
 				inventory.removeBuffs(player);
 				if (player.currenthealth <= 0) {
 					String killed;
