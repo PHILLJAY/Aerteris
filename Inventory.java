@@ -59,6 +59,10 @@ public class Inventory {
 		} catch (NumberFormatException e) {}
 		return 9;
 	}
+	
+	public void deleteItem(int index) {
+		inventory[index] = new Thing();
+	}
 
 	public void equipMenu(charac player) {
 		System.out.print("Equip/use items? [y] [n] ");
@@ -157,11 +161,11 @@ public class Inventory {
 				System.out.print("\n");
 				return true;
 			} else {
-				System.out.print("You have no items to use in battle.\n\n");
+				System.out.print("> You have no items to use in battle\n\n");
 				return false;
 			}
 		} else {
-			System.out.print("You have no items.\n\n");
+			System.out.print("> You have no items\n\n");
 			return false;
 		}
 	}

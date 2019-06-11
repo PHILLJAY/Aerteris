@@ -5,13 +5,13 @@ public class Debug {
 		//inventory();
 		//dungeon();
 		//doWall();
-		//fighting();
-		game();
+		fighting();
+		//game();
 
 	}
 	
 	public static void game() {
-		Game g = new Game();
+	Game g = new Game();
 	}
 	
 	/*public static void inventory() {
@@ -40,15 +40,21 @@ public class Debug {
 	}
 	
 	public static void fighting() {
-		/*charac player = new charac(40,7,0.2,0,0);
-		Monster monster = new Monster(
-				(int)((player.maxhealth/2)+Math.floor(Math.random()*(player.maxhealth/2))-(player.maxhealth/4)), 
-				(int)((player.attack/2)+Math.floor(Math.random()*(player.attack/2))-(player.attack/4)), 
-				(Math.random()/4), 
-				(int)((player.defense/2)+Math.floor(Math.random()*(player.defense/2))-(player.defense/4)), 
-				10
-				);
-		Battle b = new Battle(player, monster);*/
+		charac player =  new charac(60,4,0.15,2,9,10);
+		
+//		Dungeon d = new Dungeon(8,0.7,0.4,0.1,0.25,0.25);
+//		d.enterDungeon(player);
+	//	System.out.print(player.gold);
+		Monster SB = new Monster(60,3,0.1,0,10,10,"skele");
+		Inventory i= new Inventory(8);
+		i.newItem(3,3);
+		i.newItem(3,1);
+		i.newItem(2,4);
+	//	System.out.print(SB.name);
+		
+//		Monster.PrintBoos();
+		Battle b = new Battle(player,SB,i);
+		
 	}
 	
 }

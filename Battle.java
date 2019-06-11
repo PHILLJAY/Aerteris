@@ -17,9 +17,32 @@ public class Battle {
 				System.out.println("Your HP: "+x.currenthealth);
 				if(!y.name.equals("Joker")) System.out.println(y.name+ "'s HP: "+y.currenthealth +"\n");
 				else System.out.println(y.name+ "'s HP: ?? \n");
-				if((n=move())=='a') {
-					attack(x,y);
-				} else if(n=='b') {
+				if((n=move())=='i') {
+					if (inventory.printConsumables()) { //shows consumables and corresponding index in inventory (false if none exist)
+						String tmep = scan.next();
+						try {
+							int index = Integer.parseInt(tmep);
+							if (index < 1 || index > 8) index = 1;
+							int[] action = inventory.getStat(index-1);
+							if (action[0] == 3) {
+								x.currenthealth += action[1];
+								if (x.currenthealth > x.maxhealth) {
+									x.currenthealth = x.maxhealth;
+									System.out.println("> You healed back to full health");
+								} else System.out.println("> You healed " + action[1] + " health");
+								inventory.deleteItem(index-1);
+							} else if (action[0] == 4) {
+								y.currenthealth+=y.defense-action[1];
+								System.out.println("> You dealt " + action[1] + " damage");
+								inventory.deleteItem(index-1);
+							} else {
+								System.out.println("> That's not an item silly :P");
+							}
+						} catch (NumberFormatException e) {}
+					} else {
+						n=move();
+					}
+				} if(n=='b') {
 					if(Bribe(x,y)) {
 						System.out.println("> You threw " +lostg+" on the ground and ran away");
 						x.gold-=lostg;
@@ -30,20 +53,8 @@ public class Battle {
 						System.out.println("> I'll take that thanks");
 						x.gold=0;
 					}
-				} else if (n == 'i') {
-					if (inventory.printConsumables()) { //shows consumables and corresponding index in inventory (false if none exist)
-						//prompt user for number 1-8 -> index in inventory
-						int[] action = inventory.getStat(/*that prompt, this is temporary ->*/1);
-						if (action[0] == 3) {
-							//heal the amount in "action[1]"
-						} else if (action[0] == 4) {
-							//damage enemy the amount in "action[1]"
-						} else {
-							//wrong number given as prompt, retry?
-						}
-					} else {
-						//return to normal attack selection? will skip turn otherwise I think
-					}
+				} else if (n == 'a') {
+					attack(x,y);
 				}
 			} else {
 				System.out.println("You died");
@@ -105,7 +116,7 @@ public class Battle {
 		if (y.armor<0) y.armor=0;
 		if(Math.random()<=x.crit) {
 			System.out.println(x.defense);
-			
+
 			y.currenthealth+=y.defense+y.armor-x.attack*2;
 			y.armor-=x.attack*2;
 			System.out.println("> You CRIT "+ (x.attack*2-y.defense)+" damage to "+y.name+"!");
@@ -113,11 +124,11 @@ public class Battle {
 		}else {	
 			if(x.attack>y.defense) {
 				System.out.println(x.defense);
-					x.tempdamage=x.attack-y.defense;
-					y.currenthealth=y.currenthealth+y.armor+y.defense-x.attack;
-					y.armor-=x.attack;
-					System.out.println("> You deal "+ (x.tempdamage)+" damage to "+y.name);
-				
+				x.tempdamage=x.attack-y.defense;
+				y.currenthealth=y.currenthealth+y.armor+y.defense-x.attack;
+				y.armor-=x.attack;
+				System.out.println("> You deal "+ (x.tempdamage)+" damage to "+y.name);
+
 			} else {
 				System.out.println("> you did no damage");
 				x.tempdamage=0;

@@ -109,7 +109,7 @@ public class Monster extends charac {
 		switch(name) {
 		case "skele":
 			if(m.attack+2>p.defense) {
-				System.out.println("> "+m.name +" uses BONE CLAW and deals " + (m.attack+2-p.defense) +" damage! \n");
+				System.out.println("> "+m.name +" uses BONE CLAW and deals " + (m.attack+2) +" damage! \n");
 				p.currenthealth+=p.defense-(m.attack+2);
 			}else System.out.println("> "+m.name +" uses BONE CLAW and deals no damage! \n");
 			break;
