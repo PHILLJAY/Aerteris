@@ -18,7 +18,9 @@ public class Battle {
 				if(!y.name.equals("Joker")) System.out.println(y.name+ "'s HP: "+y.currenthealth +"\n");
 				else System.out.println(y.name+ "'s HP: ?? \n");
 				if((n=move())=='i') {
-					if (inventory.printConsumables()) { //shows consumables and corresponding index in inventory (false if none exist)
+					if (inventory.printConsumables()) {
+						//shows consumables and corresponding index in inventory (false if none exist)
+						System.out.println("> Which item you wanna use?");
 						String tmep = scan.next();
 						try {
 							int index = Integer.parseInt(tmep);
