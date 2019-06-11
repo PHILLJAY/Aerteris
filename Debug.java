@@ -5,8 +5,8 @@ public class Debug {
 		//inventory();
 		//dungeon();
 		//doWall();
-		fighting();
-		//game();
+		//fighting();
+		game();
 
 	}
 	
