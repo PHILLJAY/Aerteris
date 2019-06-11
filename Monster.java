@@ -63,7 +63,7 @@ public class Monster extends charac {
 	switch(x) {
 	case 1:
 		System.out.println("> Think you're gonna get in??");
-		System.out.println("> "+m.name+" Lures you in with Co-op and lowers your defense!\n");
+		System.out.println("> "+m.name+" Lures you in\n with Co-op and lowers your defense!\n");
 		p.defense-=2;
 		break;
 	case 2:
@@ -75,7 +75,7 @@ public class Monster extends charac {
 		p.currenthealth+=p.defense-(m.attack+3);
 		break;
 	case 4:
-		System.out.println("> Waterloo gets your hopes up with a scholarship and steals your health\n");
+		System.out.println("> Waterloo gets your hopes up with a\n scholarship and steals your health\n");
 		p.maxhealth-=m.attack;
 		p.currenthealth-=m.attack;
 		m.maxhealth+=m.attack;
@@ -90,7 +90,7 @@ public class Monster extends charac {
 		p.defense-=m.attack;
 		break;
 	case 7:
-		System.out.println("> Justin Trudeau visits the loo and steals your girlfriend and breaks your heart");
+		System.out.println("> Justin Trudeau visits the loo and steals \nyour girlfriend and breaks your heart");
 		System.out.println("> Your heart is bleeding\n");
 		p.bleed=true;
 		break;
@@ -174,7 +174,7 @@ public class Monster extends charac {
 				p.gold=0;
 			} else {
 				if(p.defense>m.attack*3) System.out.println("> did no dmg");
-				else System.out.println("> Master of Coins THROWS HIS MONEY BAG on you and deals " +m.attack*3+ " damage");
+				else System.out.println("> Master of Coins THROWS HIS MONEY BAG\n on you and deals " +m.attack*3+ " damage");
 				p.currenthealth-=m.attack*3+p.defense;
 			}
 			break;

@@ -19,7 +19,6 @@ public class Battle {
 				else System.out.println(y.name+ "'s HP: ?? \n");
 				if((n=move())=='i') {
 					if (inventory.printConsumables()) {
-						//shows consumables and corresponding index in inventory (false if none exist)
 						System.out.println("> Which item you wanna use?");
 						String tmep = scan.next();
 						try {
@@ -89,7 +88,7 @@ public class Battle {
 				if((n=move())=='a') {
 					attack(p,m);
 				} else if(n=='b') { 
-					System.out.println("> We regret to inform you we cannot give you an offer of admission \n");
+					System.out.println("> We regret to inform you we cannot\n give you an offer of admission\n");
 					System.out.println("> Thanks for applying ;)");
 					System.out.println("Your gold: -15 000");
 					p.gold=-15000;					
