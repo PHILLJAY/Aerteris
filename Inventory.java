@@ -179,6 +179,10 @@ public class Inventory {
 		Thing temp = new Thing();
 		return temp.nameBank[type];
 	}
+	
+	public String toString(int index) {
+		return "level " + inventory[index].level + " " + inventory[index].name;
+	}
 
 	private int countItems() {
 		int count = 0;
@@ -229,6 +233,10 @@ public class Inventory {
 		} else if (inventory[index].type == 4) {
 			return new int[] {4,inventory[index].explode};
 		} else return new int[] {0,0};
+	}
+	
+	public int getLevel(int i) {
+		return inventory[i].level;
 	}
 
 }
