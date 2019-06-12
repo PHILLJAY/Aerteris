@@ -344,6 +344,28 @@ public class Dungeon {
 						bw.newLine();
 						bw.write("exp:" + player.xp);
 						bw.newLine();
+						bw.write("player inv");
+						bw.newLine();
+						for (int i = 0; i < 8; i++) {
+							bw.write((i+1) + ":");
+							bw.newLine();
+							bw.write("dam:" + inventory.getDamage(i));
+							bw.newLine();
+							bw.write("def:" + inventory.getDefense(i));
+							bw.newLine();
+							bw.write("hea:" + inventory.getHeal(i));
+							bw.newLine();
+							bw.write("exp:" + inventory.getExplode(i));
+							bw.newLine();
+							bw.write("eqp:" + inventory.getEquipped(i));
+							bw.newLine();
+							bw.write("lvl:" + inventory.getLevel(i));
+							bw.newLine();
+							bw.write("typ:" + inventory.getType(i));
+							bw.newLine();
+							bw.write("nam:" + inventory.getName(i));
+							bw.newLine();
+						}
 						bw.write("dungeon");
 						bw.newLine();
 						bw.write("siz:" + size);
