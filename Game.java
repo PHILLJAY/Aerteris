@@ -19,7 +19,7 @@ public class Game {
 	Inventory[] shopInv = {new Inventory(3), new Inventory(3), new Inventory(3)};
 	Inventory secretShop = new Inventory(1);
 	int[][] shopPrice = {{999,999,999},{999,999,999},{999,999,999}};
-	int[] hotelPrice = {0,0,0}; // to here
+	int[] hotelPrice = {99,99,99}; // to here
 
 	boolean spaceMode = false;
 	char s = ' ';
@@ -283,6 +283,36 @@ public class Game {
 							temp = br.readLine();
 							contents[i][0] = Integer.parseInt(temp.substring(0,1));
 							contents[i][1] = Integer.parseInt(temp.substring(2));
+						}
+						br.readLine(); //shops inv
+						for (int i = 0; i < 3; i++) {
+							br.readLine(); //letter
+							for (int j = 0; j < 3; j++) {
+								Thing item = new Thing();
+								br.readLine(); // should equal j-1
+								item.damage = Integer.parseInt(br.readLine().substring(4));
+								item.defense = Integer.parseInt(br.readLine().substring(4));
+								item.heal = Integer.parseInt(br.readLine().substring(4));
+								item.explode = Integer.parseInt(br.readLine().substring(4));
+								item.equipped = Boolean.parseBoolean(br.readLine().substring(4));
+								item.level = Integer.parseInt(br.readLine().substring(4));
+								item.type = Integer.parseInt(br.readLine().substring(4));
+								item.name = br.readLine().substring(4);
+								shopInv[i].addItem(item);
+							}
+						}
+						String[] sArr = new String[3];
+						br.readLine(); //shop price
+						for (int i = 0; i < 3; i++) {
+							sArr = br.readLine().split(",");
+							for (int j = 0; j < 3; j++) {
+								shopPrice[i][j] = Integer.parseInt(sArr[j]);
+							}
+						}
+						br.readLine(); //hotel price
+						sArr = br.readLine().split(",");
+						for (int i = 0; i < 3; i++) {
+							hotelPrice[i] = Integer.parseInt(sArr[i]);
 						}
 						br.close();
 						clearConsole();
@@ -642,6 +672,53 @@ public class Game {
 							bw.newLine();
 							bw.write(contents[i][0] + "," + contents[i][1]);
 						}
+						bw.newLine();
+						bw.write("shops inv");
+						bw.newLine();
+						String temp = "You shouldn't see this...";
+						for (int i = 0; i < 3; i++) {
+							switch (i) {
+							case 0:
+								temp = "a";
+								break;
+							case 1:
+								temp = "b";
+								break;
+							case 2:
+								temp = "c";
+							}
+							bw.write(temp + ":");
+							bw.newLine();
+							for (int j = 0; j < 3; j++) {
+								bw.write((j+1) + ":");
+								bw.newLine();
+								bw.write("dam:" + shopInv[i].getDamage(j));
+								bw.newLine();
+								bw.write("def:" + shopInv[i].getDefense(j));
+								bw.newLine();
+								bw.write("hea:" + shopInv[i].getHeal(j));
+								bw.newLine();
+								bw.write("exp:" + shopInv[i].getExplode(j));
+								bw.newLine();
+								bw.write("eqp:" + shopInv[i].getEquipped(j));
+								bw.newLine();
+								bw.write("lvl:" + shopInv[i].getLevel(j));
+								bw.newLine();
+								bw.write("typ:" + shopInv[i].getType(j));
+								bw.newLine();
+								bw.write("nam:" + shopInv[i].getName(j));
+								bw.newLine();
+							}
+						}
+						bw.write("shop price");
+						bw.newLine();
+						for (int i = 0; i < 3; i++) {
+							bw.write(shopPrice[i][0] + "," + shopPrice[i][1] + "," + shopPrice[i][2]);
+							bw.newLine();
+						}
+						bw.write("hotel price");
+						bw.newLine();
+						bw.write(hotelPrice[0] + "," + hotelPrice[1] + "," + hotelPrice[2]);
 						bw.close();
 						saved = true;
 						System.out.print("Game saved.\n\n");
