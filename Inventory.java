@@ -43,8 +43,7 @@ public class Inventory {
 		if ((replace = replaceItem()-1) == 8) {
 			System.out.print("You did not take the item.\n\n");
 		} else {
-			System.out.print("You dropped your level " + inventory[replace].level + " " +
-					inventory[replace].name + ".\n\n");
+			System.out.print("You dropped your " + toString(replace) + ".\n\n");
 			inventory[replace] = new Thing();
 			inventory[replace].generateNew(level, type);
 		}
@@ -59,9 +58,32 @@ public class Inventory {
 		} catch (NumberFormatException e) {}
 		return 9;
 	}
-	
+
 	public void deleteItem(int index) {
 		inventory[index] = new Thing();
+	}
+
+	public void addItem(Thing item) {
+		for (int i = 0; i < size; i++) {
+			if (inventory[i].name.equals("")) {
+				inventory[i] = item;
+				return;
+			}
+		}
+		printInventory();
+		System.out.print("Which item do you want to replace? [1-8] ");
+		String temp = in.next();
+		try {
+			if (Integer.parseInt(temp) > 0 && Integer.parseInt(temp) < 9) {
+				inventory[Integer.parseInt(temp)-1] = item;
+				System.out.print("You dropped your " + toString(Integer.parseInt(temp)-1) + ".\n\n");
+				return;
+			}
+		} catch (NumberFormatException e) {}
+		System.out.print("You actually didn't take \n" +
+				"the item you just spent money on...\n" + 
+				"Why would you do that???\n\n"); 
+		return;
 	}
 
 	public void equipMenu(charac player) {
@@ -80,22 +102,22 @@ public class Inventory {
 						if ((inventory[use].type > 0 && inventory[use].type < 3) || inventory[use].type > 4) {
 							if (inventory[use].equipped) {
 								inventory[use].equipped = false;
-								System.out.print("You unequipped your level " + inventory[use].level + " " + inventory[use].name + ".\n\n");
+								System.out.print("You unequipped your " + toString(use) + ".\n\n");
 							} else {
 								int check = inventory[use].type;
 								for (int i = 0; i < size; i++) {
 									if (use != i) {
 										if (check == inventory[i].type && inventory[i].equipped) {
 											inventory[i].equipped = false;
-											System.out.print("You unequipped your level " + inventory[i].level + " " + inventory[i].name + ".\n");
+											System.out.print("You unequipped your " + toString(i) + ".\n");
 										} else if (check > 4 && inventory[i].type > 4 && inventory[i].equipped) {
 											inventory[i].equipped = false;
-											System.out.print("You unequipped your level " + inventory[i].level + " " + inventory[i].name + ".\n");
+											System.out.print("You unequipped your " + toString(i) + ".\n");
 										}
 									}
 								}
 								inventory[use].equipped = true;
-								System.out.print("You equipped your level " + inventory[use].level + " " + inventory[use].name + ".\n\n");
+								System.out.print("You equipped your " + toString(use) + ".\n\n");
 							}
 						} else if (inventory[use].type == 3) {
 							if (player.maxhealth-player.currenthealth < inventory[use].heal) {
@@ -179,7 +201,7 @@ public class Inventory {
 		Thing temp = new Thing();
 		return temp.nameBank[type];
 	}
-	
+
 	public String toString(int index) {
 		return "level " + inventory[index].level + " " + inventory[index].name;
 	}
@@ -234,7 +256,7 @@ public class Inventory {
 			return new int[] {4,inventory[index].explode};
 		} else return new int[] {0,0};
 	}
-	
+
 	public int getLevel(int i) {
 		return inventory[i].level;
 	}
