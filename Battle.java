@@ -124,7 +124,6 @@ public class Battle {
 			x.tempdamage=x.attack*2;
 		}else {	
 			if(x.attack>y.defense) {
-				System.out.println(x.defense);
 				x.tempdamage=x.attack-y.defense;
 				y.currenthealth=y.currenthealth+y.armor+y.defense-x.attack;
 				y.armor-=x.attack;
