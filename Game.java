@@ -15,11 +15,11 @@ public class Game {
 	private BufferedReader br;
 	private BufferedWriter bw, bwr;
 	charac player;
-	Inventory inventory = new Inventory(8);
+	Inventory inventory = new Inventory(8); //save here
 	Inventory[] shopInv = {new Inventory(3), new Inventory(3), new Inventory(3)};
 	Inventory secretShop = new Inventory(1);
 	int[][] shopPrice = {{999,999,999},{999,999,999},{999,999,999}};
-	int[] hotelPrice = {0,0,0};
+	int[] hotelPrice = {0,0,0}; // to here
 
 	boolean spaceMode = false;
 	char s = ' ';
@@ -261,7 +261,20 @@ public class Game {
 						int exp = Integer.parseInt(br.readLine().substring(4));
 						player = new charac(max,atk,crt,def,gol,exp);
 						player.currenthealth = cur;
-						//inventory here
+						br.readLine(); //player inv
+						for (int i = 0; i < 8; i++) {
+							Thing item = new Thing();
+							br.readLine(); // should equal i-1
+							item.damage = Integer.parseInt(br.readLine().substring(4));
+							item.defense = Integer.parseInt(br.readLine().substring(4));
+							item.heal = Integer.parseInt(br.readLine().substring(4));
+							item.explode = Integer.parseInt(br.readLine().substring(4));
+							item.equipped = Boolean.parseBoolean(br.readLine().substring(4));
+							item.level = Integer.parseInt(br.readLine().substring(4));
+							item.type = Integer.parseInt(br.readLine().substring(4));
+							item.name = br.readLine().substring(4);
+							inventory.addItem(item);
+						}
 						String start = br.readLine();
 						if (!start.equals("world")) {
 							while (!br.readLine().equals("world")) {}
@@ -586,7 +599,7 @@ public class Game {
 						bwr.write("");
 						bwr.close();
 						bw = new BufferedWriter(new FileWriter(file, true));
-						bw.write("player");
+						bw.write("player"); 
 						bw.newLine();
 						bw.write("max:" + player.maxhealth);
 						bw.newLine();
@@ -602,6 +615,28 @@ public class Game {
 						bw.newLine();
 						bw.write("exp:" + player.xp);
 						bw.newLine();
+						bw.write("player inv");
+						bw.newLine();
+						for (int i = 0; i < 8; i++) {
+							bw.write((i+1) + ":");
+							bw.newLine();
+							bw.write("dam:" + inventory.getDamage(i));
+							bw.newLine();
+							bw.write("def:" + inventory.getDefense(i));
+							bw.newLine();
+							bw.write("hea:" + inventory.getHeal(i));
+							bw.newLine();
+							bw.write("exp:" + inventory.getExplode(i));
+							bw.newLine();
+							bw.write("eqp:" + inventory.getEquipped(i));
+							bw.newLine();
+							bw.write("lvl:" + inventory.getLevel(i));
+							bw.newLine();
+							bw.write("typ:" + inventory.getType(i));
+							bw.newLine();
+							bw.write("nam:" + inventory.getName(i));
+							bw.newLine();
+						}
 						bw.write("world");
 						for (int i = 0; i < 3; i++) {
 							bw.newLine();

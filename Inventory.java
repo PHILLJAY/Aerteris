@@ -17,7 +17,7 @@ public class Inventory {
 	public void newItem(int level) {
 		int replace;
 		for (int i = 0; i < size; i++) {
-			if (inventory[i].name.equals("")) {
+			if (inventory[i].type == 0) {
 				inventory[i].generateNew(level);
 				return;
 			}
@@ -35,7 +35,7 @@ public class Inventory {
 	public void newItem(int level, int type) {
 		int replace;
 		for (int i = 0; i < size; i++) {
-			if (inventory[i].name.equals("")) {
+			if (inventory[i].type == 0) {
 				inventory[i].generateNew(level, type);
 				return;
 			}
@@ -65,7 +65,7 @@ public class Inventory {
 
 	public void addItem(Thing item) {
 		for (int i = 0; i < size; i++) {
-			if (inventory[i].name.equals("")) {
+			if (inventory[i].type == 0) {
 				inventory[i] = item;
 				return;
 			}
@@ -256,9 +256,37 @@ public class Inventory {
 			return new int[] {4,inventory[index].explode};
 		} else return new int[] {0,0};
 	}
+	
+	public int getDamage(int i) {
+		return inventory[i].damage;
+	}
+	
+	public int getDefense(int i) {
+		return inventory[i].defense;
+	}
+	
+	public int getHeal(int i) {
+		return inventory[i].heal;
+	}
+	
+	public int getExplode(int i) {
+		return inventory[i].explode;
+	}
+	
+	public boolean getEquipped(int i) {
+		return inventory[i].equipped;
+	}
 
 	public int getLevel(int i) {
 		return inventory[i].level;
+	}
+	
+	public int getType(int i) {
+		return inventory[i].type;
+	}
+	
+	public String getName(int i) {
+		return inventory[i].name;
 	}
 	
 	public Thing getItem(int index) {
