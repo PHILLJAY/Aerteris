@@ -85,13 +85,39 @@ public class Battle {
 			if(isDead(p)==false) {
 				System.out.println("Your HP: "+p.currenthealth);
 				System.out.println(m.name+ "'s HP: "+m.currenthealth +"\n");
-				if((n=move())=='a') {
-					attack(p,m);
+				if((n=move())=='i') {
+					if (inventory.printConsumables()) {
+						System.out.println("> Which item you wanna use?");
+						String tmep = scan.next();
+						try {
+							int index = Integer.parseInt(tmep);
+							if (index < 1 || index > 8) index = 1;
+							int[] action = inventory.getStat(index-1);
+							if (action[0] == 3) {
+								p.currenthealth += action[1];
+								if (p.currenthealth > p.maxhealth) {
+									p.currenthealth = p.maxhealth;
+									System.out.println("> You healed back to full health");
+								} else System.out.println("> You healed " + action[1] + " health");
+								inventory.deleteItem(index-1);
+							} else if (action[0] == 4) {
+								m.currenthealth+=m.defense-action[1];
+								System.out.println("> You dealt " + action[1] + " damage");
+								inventory.deleteItem(index-1);
+							} else {
+								System.out.println("> That's not an item silly :P");
+							}
+						} catch (NumberFormatException e) {}
+					} else {
+						n=move();
+					}
 				} else if(n=='b') { 
 					System.out.println("> We regret to inform you we cannot\n give you an offer of admission\n");
 					System.out.println("> Thanks for applying ;)");
 					System.out.println("Your gold: -15 000");
 					p.gold=-15000;					
+				} else if (n=='a') {
+					attack(p,m);
 				}
 			} else {
 				System.out.println("Congratulations, You have been deferred to Geomatics!");
