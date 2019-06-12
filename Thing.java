@@ -6,9 +6,9 @@ public class Thing {
 	public int explode = 0;
 	public boolean equipped = false;
 	public int level = 0;
-	public String name = "";
+	public String name = " ";
 	public int type = 0; //corresponds with nameBank
-	public String[] nameBank = {"", "Helmet", "Chestplate", "Health Potion",
+	public String[] nameBank = {" ", "Helmet", "Chestplate", "Health Potion",
 			"Bomb", "Sword", "Hammer"};
 	
 	public Thing() {
