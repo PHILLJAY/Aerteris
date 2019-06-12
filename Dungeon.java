@@ -31,6 +31,9 @@ public class Dungeon {
 	private Scanner input = new Scanner(System.in);
 	private int loc;
 	String action;
+	Inventory[] shopInv = {new Inventory(3), new Inventory(3), new Inventory(3)};
+	int[][] shopPrice = {new int[3],new int[3],new int[3]};
+	int[] hotelPrice = new int[3]; // to here
 	private boolean rewarded;
 	private boolean portal;
 
@@ -125,9 +128,13 @@ public class Dungeon {
 	 * 
 	 * @see {@link #getRoom()}, {@link #refreshRoom()}, {@link #takeInput()}
 	 */
-	public boolean enterDungeon(charac player, Inventory inventory, int[][] contents) {
+	public boolean enterDungeon(charac player, Inventory inventory, int[][] contents,
+			Inventory[] shopInv, int[][] shopPrice, int[] hotelPrice) {
 		this.player = player;
 		this.inventory = inventory;
+		this.shopInv = shopInv;
+		this.shopPrice = shopPrice;
+		this.hotelPrice = hotelPrice;
 		lastLevel = player.getLevel();
 		do {
 			switch (action) {
@@ -406,6 +413,53 @@ public class Dungeon {
 							bw.newLine();
 							bw.write(contents[i][0] + "," + contents[i][1]);
 						}
+						bw.newLine();
+						bw.write("shops inv");
+						bw.newLine();
+						String tempAgain = "You shouldn't see this...";
+						for (int i = 0; i < 3; i++) {
+							switch (i) {
+							case 0:
+								tempAgain = "a";
+								break;
+							case 1:
+								tempAgain = "b";
+								break;
+							case 2:
+								tempAgain = "c";
+							}
+							bw.write(tempAgain + ":");
+							bw.newLine();
+							for (int j = 0; j < 3; j++) {
+								bw.write((j+1) + ":");
+								bw.newLine();
+								bw.write("dam:" + shopInv[i].getDamage(j));
+								bw.newLine();
+								bw.write("def:" + shopInv[i].getDefense(j));
+								bw.newLine();
+								bw.write("hea:" + shopInv[i].getHeal(j));
+								bw.newLine();
+								bw.write("exp:" + shopInv[i].getExplode(j));
+								bw.newLine();
+								bw.write("eqp:" + shopInv[i].getEquipped(j));
+								bw.newLine();
+								bw.write("lvl:" + shopInv[i].getLevel(j));
+								bw.newLine();
+								bw.write("typ:" + shopInv[i].getType(j));
+								bw.newLine();
+								bw.write("nam:" + shopInv[i].getName(j));
+								bw.newLine();
+							}
+						}
+						bw.write("shop price");
+						bw.newLine();
+						for (int i = 0; i < 3; i++) {
+							bw.write(shopPrice[i][0] + "," + shopPrice[i][1] + "," + shopPrice[i][2]);
+							bw.newLine();
+						}
+						bw.write("hotel price");
+						bw.newLine();
+						bw.write(hotelPrice[0] + "," + hotelPrice[1] + "," + hotelPrice[2]);
 						bw.close();
 						saved = true;
 						System.out.print("Game saved.\n\n");

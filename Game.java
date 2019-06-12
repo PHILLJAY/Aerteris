@@ -333,7 +333,7 @@ public class Game {
 
 		if (start.equals("dungeon")) {
 			Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, init);
-			if (!d.enterDungeon(player, inventory, contents)) return;
+			if (!d.enterDungeon(player, inventory, contents, shopInv, shopPrice, hotelPrice)) return;
 			skip = true;
 		} else if (start.equals("world")) {
 			skip = true;
@@ -382,7 +382,7 @@ public class Game {
 							contents[approachContent][1] = 1;
 							Dungeon d = new Dungeon(5, 0.7, 0.4, 0.1, 0.25, 0.25, 0.1, 0.05, file, "new");
 							System.out.print("You entered a dungeon!\n");
-							if (!d.enterDungeon(player, inventory, contents)) return;
+							if (!d.enterDungeon(player, inventory, contents, shopInv, shopPrice, hotelPrice)) return;
 							printContents();
 							break;
 						case 1:
