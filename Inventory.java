@@ -75,8 +75,8 @@ public class Inventory {
 		String temp = in.next();
 		try {
 			if (Integer.parseInt(temp) > 0 && Integer.parseInt(temp) < 9) {
-				inventory[Integer.parseInt(temp)-1] = item;
 				System.out.print("You dropped your " + toString(Integer.parseInt(temp)-1) + ".\n\n");
+				inventory[Integer.parseInt(temp)-1] = item;
 				return;
 			}
 		} catch (NumberFormatException e) {}
@@ -259,6 +259,10 @@ public class Inventory {
 
 	public int getLevel(int i) {
 		return inventory[i].level;
+	}
+	
+	public Thing getItem(int index) {
+		return inventory[index];
 	}
 
 }

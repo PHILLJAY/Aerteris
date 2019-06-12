@@ -17,6 +17,7 @@ public class Game {
 	charac player;
 	Inventory inventory = new Inventory(8);
 	Inventory[] shopInv = {new Inventory(3), new Inventory(3), new Inventory(3)};
+	Inventory secretShop = new Inventory(1);
 	int[][] shopPrice = {{999,999,999},{999,999,999},{999,999,999}};
 	int[] hotelPrice = {0,0,0};
 
@@ -407,17 +408,17 @@ public class Game {
 			inventory.printInventory();
 			System.out.print("Shop's inventory: \n");
 			shopInv[index].printInventory();
+			System.out.print("Your gold: " + player.gold + "\n");
 			while (true) {
-				System.out.print("Your gold: " + player.gold + 
-						"\nWhat would you like to buy? [1-3] [done] ");
+				System.out.print("What would you like to buy? [1-3] [done] ");
 				String temp = in.next();
 				if (temp.equals("done")) {
 					System.out.print("Come again soon!\n\n");
 					return;
 				}
 				try {
-					int tempI = Integer.parseInt(temp);
-					if (tempI < 4 && tempI > 0) {
+					int tempI = Integer.parseInt(temp)-1;
+					if (tempI < 3 && tempI > -1) {
 						System.out.print("Do you want to buy the " + shopInv[index].toString(tempI) + 
 								" for " + shopPrice[index][tempI] + " gold? [y] [n] ");
 						temp = in.next();
@@ -425,25 +426,46 @@ public class Game {
 							if (player.gold < shopPrice[index][tempI]) {
 								System.out.print("You need " + (shopPrice[index][tempI]-player.gold) + 
 										" more gold!\n\n");
+								break;
 							} else {
 								player.gold -= shopPrice[index][tempI];
-								//buy
+								inventory.addItem(shopInv[index].getItem(tempI));
 								System.out.print("You bought the " + shopInv[index].toString(tempI) + 
 										"! \nYou payed " + shopPrice[index][tempI] + 
-										" gold (" + player.gold + " left).\n\n");
+										" gold (" + player.gold + " left).\n");
+								break;
 							}
-						} else 
-					} else if (tempI == 4) {
+						}
+					} else if (tempI == 3) {
 						if (!visited) {
 							System.out.print("Ahhhhh... if you insist.\n");
+							visited = true;
+							secretShop.fill(player.getLevel()+2);
+							int secretPrice = (secretShop.getLevel(0))*10 + (int)(Math.random()*21);
+							System.out.print("One time offer! \nDo you want to buy a " + 
+									secretShop.toString(0) + " for " + secretPrice + " gold? [y] [n] ");
+							temp = in.next();
+							if (temp.equals("y")) {
+								if (player.gold < secretPrice) {
+									System.out.print("You need " + (secretPrice-player.gold) + 
+											" more gold!\n\n");
+								} else {
+									player.gold -= secretPrice;
+									inventory.addItem(secretShop.getItem(0));
+									System.out.print("You bought the " + secretShop.toString(0) + 
+											"! \nYou payed " + secretPrice + 
+											" gold (" + player.gold + " left).\n");
+								}
+							}
+							System.out.print("\n");
+							break;
 						} else {
-							System.out.print("What are you looking for back there?");
+							System.out.print("What are you looking for back there?\n");
 						}
 					}
 				} catch (NumberFormatException e) {}
 			}
 		}
-		System.out.print("Thanks for visiting! Bye!\n\n");
 	}
 
 	private void hotel (boolean visited, int index) {
